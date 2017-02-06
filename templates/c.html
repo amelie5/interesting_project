@@ -1,73 +1,78 @@
 <!DOCTYPE html>
-<html>
-<head>
-    <meta charset="utf-8">
-    <title>ECharts</title>
-    <!-- 引入 echarts.js -->
-    <script src="{{ url_for('static', filename='echarts.js') }}"></script>
-</head>
-<body>
-<h1>{{ code }}</h1>
-    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div id="main" style="width: 900px;height:600px;"></div>
-    <script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
-        var myChart = echarts.init(document.getElementById('main'));
+<html style="height: 100%">
+   <head>
+       <meta charset="utf-8">
+       <script src="{{ url_for('static', filename='echarts.js') }}"></script>
+   </head>
+   <body style="height: 100%; margin: 0">
+   <h1>{{ code }}</h1>
+       <div id="container" style="height: 80%"></div>
+       <script type="text/javascript">
+var dom = document.getElementById("container");
+var myChart = echarts.init(dom);
+var app = {};
+option = null;
+var base = +new Date(2014, 9, 3);
+var oneDay = 24 * 3600 * 1000;
+var date = [];
 
-        //data
-var data = [220, 182, 191, 234, 190, 330, 310,50,200];
-var markLineData = [];
-for (var i = 1; i < data.length; i++) {
-    markLineData.push([{
-        xAxis: i - 1,
-        yAxis: data[i - 1],
-        value: (data[i] + data[i-1]).toFixed(2)
-    }, {
-        xAxis: i,
-        yAxis: data[i]
-    }]);
+var data = [Math.random() * 150];
+var now = new Date(base);
+
+function addData(shift) {
+    now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');
+    date.push(now);
+    data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
+
+    if (shift) {
+        date.shift();
+        data.shift();
+    }
+
+    now = new Date(+new Date(now) + oneDay);
 }
 
-//option
+for (var i = 1; i < 300; i++) {
+    addData();
+}
+
 option = {
-    title: {
-        text: 'Awesome Chart'
-    },
-    tooltip : {
-        trigger: 'axis'
-    },
     xAxis: {
-        data: ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat']
+        type: 'category',
+        boundaryGap: false,
+        data: date
     },
-    yAxis: {},
-    series: [{
-        type: 'line',
-        data:data,
-        markPoint: {
-            data: [
-                {type: 'max', name: '最大值'},
-                {type: 'min', name: '最小值'}
-            ]
-        },
-        markLine: {
-            smooth: true,
-                    effect: {
-                        show: true
-                    },
-                    distance: 10,
-            label: {
-                normal: {
-                    position: 'middle'
-                }
-            },
-            symbol: ['none', 'none'],
-            data: markLineData
+    yAxis: {
+        boundaryGap: [0, '50%'],
+        type: 'value'
+    },
+    series: [
+        {
+            name:'成交',
+            type:'line',
+            smooth:true,
+            symbol: 'none',
+            stack: 'a',
+            data: data
         }
-    }]
+    ]
 };
 
-        // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-    </script>
-</body>
+setInterval(function () {
+    addData(true);
+    myChart.setOption({
+        xAxis: {
+            data: date
+        },
+        series: [{
+            name:'成交',
+            data: data
+        }]
+    });
+}, 500);;
+if (option && typeof option === "object") {
+    myChart.setOption(option, true);
+}
+       </script>
+   </body>
 </html>

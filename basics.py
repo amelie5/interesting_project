@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-__author__ = 'ghost'
+__author__ = 'amelie'
 
 from sqlalchemy import create_engine,Table,Column,MetaData,Integer,String,DATE,FLOAT,INT
 import tushare as ts
@@ -7,7 +7,7 @@ df=ts.get_stock_basics()
 df.reset_index(level=0, inplace=True)
 df1=df[["code","name","outstanding","timeToMarket","holders"]]
 d = df1.to_dict(orient='records')
-
+print("get basics already!")
 
 #连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -24,4 +24,5 @@ stock_basics = Table('stock_basics', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
+conn.execute("delete from stock_basics")
 r = conn.execute(stock_basics.insert(), d)

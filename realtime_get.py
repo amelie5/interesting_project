@@ -1,17 +1,7 @@
 from datetime import date, time, datetime, timedelta
 from tushare import *
 from sqlalchemy import create_engine,select,MetaData,Table,Column,Float,TIMESTAMP
-
-#连接数据库
-engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
-metadata=MetaData()
-# 获取数据库连接
-conn = engine.connect()
-#定义表
-test = Table('price', metadata,
-        Column('data', Float, nullable=False),
-        Column('ctime', TIMESTAMP, nullable=False)
-    )
+from mysql import *
 
 def work():
     # df = get_realtime_quotes('000581')  # Single stock symbol
