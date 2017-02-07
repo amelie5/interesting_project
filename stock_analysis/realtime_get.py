@@ -1,17 +1,17 @@
-from datetime import date, time, datetime, timedelta
+from datetime import datetime, timedelta
+
 from tushare import *
-from sqlalchemy import create_engine,select,MetaData,Table,Column,Float,TIMESTAMP
-from mysql import *
+
 
 def work():
-    # df = get_realtime_quotes('000581')  # Single stock symbol
-    # df1 = df[['code', 'name', 'price', 'bid', 'ask', 'volume', 'amount', 'time']]
-    # print(df1)
-    print('#' * 20)
-    s1 = select([test])  # 查询全表
-    print(s1)
-    r1 = conn.execute(s1)
-    print(r1.fetchall())
+    df = get_realtime_quotes('000581')  # Single stock symbol
+    df1 = df[['code', 'name', 'price', 'bid', 'ask', 'volume', 'amount', 'time']]
+    print(df1)
+    # print('#' * 20)
+    # s1 = select([test])  # 查询全表
+    # print(s1)
+    # r1 = conn.execute(s1)
+    # print(r1.fetchall())
 
 
 def runTask(func, day=0, hour=0, min=0, second=0):

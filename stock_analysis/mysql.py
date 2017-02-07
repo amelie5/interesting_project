@@ -24,5 +24,8 @@ test = Table('price', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-
+print('#' * 20)
+s1 = 'select * from price'  # 查询全表
+r1 = conn.execute(s1)
+print(r1.fetchall())
 

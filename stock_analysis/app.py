@@ -1,5 +1,6 @@
 from flask import Flask, render_template,jsonify
-from mysql import *
+
+from stock_analysis.mysql import *
 
 app = Flask(__name__)
 app.debug = True
@@ -8,7 +9,7 @@ app.debug = True
 def index():
     labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
     values = [10, 9, 8, 7, 6, 4, 7, 8]
-    return render_template('index.html', values=values, labels=labels)
+    return render_template('app.py', values=values, labels=labels)
 
 @app.route('/charts')
 def e2():
