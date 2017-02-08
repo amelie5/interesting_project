@@ -5,6 +5,7 @@
     <title>ECharts</title>
     <!-- 引入 echarts.js -->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </head>
 <body>
 <h1>{{ code }}</h1>
@@ -13,32 +14,24 @@
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var data = [];
-    function setOption(data) {
+    var type=[];
+    function setOption(data,type) {
         var myChart = echarts.init(document.getElementById('main'));
         option = {
             title: {
-                text: '某地区蒸发量',
+                text: '跌停涨停个数',
             },
             tooltip: {
                 trigger: 'axis'
             },
             legend: {
-                data: ['蒸发量']
-            },
-            toolbox: {
-                show: true,
-                feature: {
-                    dataView: {show: true, readOnly: false},
-                    magicType: {show: true, type: ['line', 'bar']},
-                    restore: {show: true},
-                    saveAsImage: {show: true}
-                }
+                data: ['个数']
             },
             calculable: true,
             xAxis: [
                 {
                     type: 'category',
-                    data: ['1月', '2月', '3月', '4月', '5月']
+                    data: type
                 }
             ],
             yAxis: [
@@ -48,9 +41,9 @@
             ],
             series: [
                 {
-                    name: '蒸发量',
+                    name: '个数',
                     type: 'bar',
-                    data: [2.0, 4.9, 7.0, 23.2, 25.6]
+                    data: data
                 }
             ]
         };
@@ -59,26 +52,22 @@
     }
 
     //获取...排行数据
-    function getMapData(limit){
-      alert('hello111111111111111111111');
-	  $.ajax({
-		  url:'http://127.0.0.1:5000/e1e',
-		  type:'post',
-		  dataType:'JSON',
-
-		  success:function(objdata){
-		        alert('hello');
-			  for(var i = 0;i < objdata.length;i ++){
-				var dScore = parseInt(objdata[i].values);
-				var oneData = {value:dScore};
-				data.push(oneData);
-			  }
-			  console.log(data);
-			 setOption(data);//执行setOption函数。传参
-		  }
-	  });
-	}
-    getMapData();
+    function getData() {
+        $.ajax({
+            url: '/e1e',
+            type: 'post',
+            dataType: 'JSON',
+            success: function (objdata) {
+                for (var i = 0; i < objdata.values.length; i++){
+                    var oneData = objdata.values[i];
+                    data.push(oneData);
+                    type.push(objdata.labels[i])
+                }
+                setOption(data,type);//执行setOption函数。传参
+            }
+        });
+    }
+    getData();
 </script>
 </body>
 </html>

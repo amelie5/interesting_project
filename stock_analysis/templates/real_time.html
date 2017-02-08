@@ -5,6 +5,7 @@
     <title>ECharts</title>
     <!-- 引入 echarts.js -->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 </head>
 <body>
 <h1>{{ code }}</h1>
@@ -13,25 +14,27 @@
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var data=[];
-    function setOption(data) {
+    var time=[];
+    function setOption(data,time) {
+        console.log(time);
+                    console.log(data);
         var myChart = echarts.init(document.getElementById('main'));
         option = {
             title: {
                 text: '时间坐标折线图'
             },
             legend: {
-                data: ['series1']
+                data: ['price']
             },
             xAxis: [
                 {
                     type: 'time',
-                    splitNumber: 6
+                    data:new Date()
                 }
             ],
             yAxis: [
                 {
-                    type: 'value',
-                    scale: 'true'
+                    type: 'value'
                 }
             ],
             series: [
@@ -39,37 +42,33 @@
                     name: 'price',
                     type: 'line',
                     symbol: 'none',//折线上的原点大小
-                    data: []
+                    data: 1
                 }
             ]
         };
+        myChart.setOption(option);
     }
     // 使用刚指定的配置项和数据显示图表。
-    myChart.setOption(option);
+
     function getData() {
         $.ajax(
             {
                 type: "POST",
                 url: "/line", //把表单数据发送到/weather
-                data: null, // 发送的数据
                 dataType: "json",  //返回数据形式为json
-                async: false,
-                error: function (request) {
-                    alert("发送请求失败！");
-                },
                 success: function (result) {
-                    alert(result);
-                    for (i = 0, max = result.length; i < max; i++) { //注意：result.month.length
-                        option.xAxis[0].data.push(result.time[i]);
-                        option.series[0].data.push(parseFloat(result.data[i]));
-                    }
-                    myChart.setOption(option);
+
+
+                        time.push(new Date());
+                        data.push((Math.random() * 10 + 5).toFixed(1) - 0);
+
+
+                    setOption(data,time);
                 }
-
             });
-
     }
-    getData();
+    setInterval(
+        getData, 2100);
 </script>
 </body>
 </html>

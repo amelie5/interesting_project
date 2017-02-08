@@ -27,7 +27,7 @@ def e1():
 def e1e():
     labels = ["January", "February", "March", "April", "May"]
     values = [10, 9, 8, 7, 6]
-    return  jsonify(values=values)
+    return  jsonify(values=values, labels=labels)
 
 
 @app.route('/code/<code>')
@@ -36,9 +36,10 @@ def code(code=None):
 
 @app.route('/line', methods=["POST"])
 def line():
-    s1 = 'select * from price'  # 查询全表
+    s1 = 'select ctime,data from price'  # 查询全表
     r1 = conn.execute(s1)
     res = r1.fetchall()
+    print(x[0] for x in res)
     return jsonify(time = [x[0] for x in res],
                    data = [x[1] for x in res])
 
