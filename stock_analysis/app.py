@@ -1,6 +1,6 @@
 from flask import Flask, render_template,jsonify
 
-from stock_analysis.mysql import *
+from mysql import *
 
 app = Flask(__name__)
 app.debug = True
@@ -9,7 +9,7 @@ app.debug = True
 def index():
     labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
     values = [10, 9, 8, 7, 6, 4, 7, 8]
-    return render_template('app.py', values=values, labels=labels)
+    return render_template('index.html', values=values, labels=labels)
 
 @app.route('/charts')
 def e2():
@@ -17,13 +17,26 @@ def e2():
     values = [10, 9, 8, 7, 6, 4, 7, 8]
     return render_template('charts.html', values=values, labels=labels)
 
+@app.route('/e1')
+def e1():
+    labels = ["January", "February", "March", "April", "May"]
+    values = [10, 9, 8, 7, 6]
+    return render_template('e1.html', code=values, labels=labels)
+
+@app.route('/e1e', methods=["POST"])
+def e1e():
+    labels = ["January", "February", "March", "April", "May"]
+    values = [10, 9, 8, 7, 6]
+    return  jsonify(values=values)
+
+
 @app.route('/code/<code>')
-def e1(code=None):
+def code(code=None):
     return render_template('real_time.html', code=code)
 
 @app.route('/line', methods=["POST"])
 def line():
-    s1 = select([test])  # 查询全表
+    s1 = 'select * from price'  # 查询全表
     r1 = conn.execute(s1)
     res = r1.fetchall()
     return jsonify(time = [x[0] for x in res],

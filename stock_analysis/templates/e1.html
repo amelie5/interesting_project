@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>ECharts</title>
+    <!-- 引入 echarts.js -->
+    <script src="{{ url_for('static', filename='echarts.js') }}"></script>
+</head>
+<body>
+<h1>{{ code }}</h1>
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 900px;height:600px;"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var data = [];
+    function setOption(data) {
+        var myChart = echarts.init(document.getElementById('main'));
+        option = {
+            title: {
+                text: '某地区蒸发量',
+            },
+            tooltip: {
+                trigger: 'axis'
+            },
+            legend: {
+                data: ['蒸发量']
+            },
+            toolbox: {
+                show: true,
+                feature: {
+                    dataView: {show: true, readOnly: false},
+                    magicType: {show: true, type: ['line', 'bar']},
+                    restore: {show: true},
+                    saveAsImage: {show: true}
+                }
+            },
+            calculable: true,
+            xAxis: [
+                {
+                    type: 'category',
+                    data: ['1月', '2月', '3月', '4月', '5月']
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value'
+                }
+            ],
+            series: [
+                {
+                    name: '蒸发量',
+                    type: 'bar',
+                    data: [2.0, 4.9, 7.0, 23.2, 25.6]
+                }
+            ]
+        };
+        // 使用刚指定的配置项和数据显示图表。
+        myChart.setOption(option);
+    }
+
+    //获取...排行数据
+    function getMapData(limit){
+      alert('hello111111111111111111111');
+	  $.ajax({
+		  url:'http://127.0.0.1:5000/e1e',
+		  type:'post',
+		  dataType:'JSON',
+
+		  success:function(objdata){
+		        alert('hello');
+			  for(var i = 0;i < objdata.length;i ++){
+				var dScore = parseInt(objdata[i].values);
+				var oneData = {value:dScore};
+				data.push(oneData);
+			  }
+			  console.log(data);
+			 setOption(data);//执行setOption函数。传参
+		  }
+	  });
+	}
+    getMapData();
+</script>
+</body>
+</html>

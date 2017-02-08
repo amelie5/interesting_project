@@ -8,63 +8,68 @@
 </head>
 <body>
 <h1>{{ code }}</h1>
-    <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-    <div id="main" style="width: 900px;height:600px;"></div>
-    <script type="text/javascript">
-        // 基于准备好的dom，初始化echarts实例
+<!-- 为ECharts准备一个具备大小（宽高）的Dom -->
+<div id="main" style="width: 900px;height:600px;"></div>
+<script type="text/javascript">
+    // 基于准备好的dom，初始化echarts实例
+    var data=[];
+    function setOption(data) {
         var myChart = echarts.init(document.getElementById('main'));
-         option = {
-    title : {
-        text : '时间坐标折线图'
-    },
-    legend : {
-        data : ['series1']
-    },
-    xAxis : [
-        {
-            type : 'time',
-            splitNumber:6
-        }
-    ],
-    yAxis : [
-        {
-            type : 'value',
-            scale : 'true'
-        }
-    ],
-    series : [
-        {
-            name: 'price',
-            type: 'line',
-            symbol: 'none',//折线上的原点大小
-            data: []
-        }
-    ]
+        option = {
+            title: {
+                text: '时间坐标折线图'
+            },
+            legend: {
+                data: ['series1']
+            },
+            xAxis: [
+                {
+                    type: 'time',
+                    splitNumber: 6
+                }
+            ],
+            yAxis: [
+                {
+                    type: 'value',
+                    scale: 'true'
+                }
+            ],
+            series: [
+                {
+                    name: 'price',
+                    type: 'line',
+                    symbol: 'none',//折线上的原点大小
+                    data: []
+                }
+            ]
+        };
+    }
+    // 使用刚指定的配置项和数据显示图表。
+    myChart.setOption(option);
+    function getData() {
+        $.ajax(
+            {
+                type: "POST",
+                url: "/line", //把表单数据发送到/weather
+                data: null, // 发送的数据
+                dataType: "json",  //返回数据形式为json
+                async: false,
+                error: function (request) {
+                    alert("发送请求失败！");
+                },
+                success: function (result) {
+                    alert(result);
+                    for (i = 0, max = result.length; i < max; i++) { //注意：result.month.length
+                        option.xAxis[0].data.push(result.time[i]);
+                        option.series[0].data.push(parseFloat(result.data[i]));
+                    }
+                    myChart.setOption(option);
+                }
 
-};
+            });
 
-         $.ajax(
-             {
-                 type: "POST",
-                 url: "/line", //把表单数据发送到/weather
-                 data: null, // 发送的数据
-                 dataType: "json",  //返回数据形式为json
-                 async: false,
-                 error: function (request) {
-                     alert("发送请求失败！");
-                 },
-                 success: function (result) {
-                     alert(result);
-                     for (i = 0, max = result.month.length; i < max; i++) { //注意：result.month.length
-                         option.xAxis[0].data.push(result.time[i]);
-                         option.series[0].data.push(parseFloat(result.data[i]));
-                     }
-                     ;
-                 }
-             });
-         // 使用刚指定的配置项和数据显示图表。
-        myChart.setOption(option);
-
-    </script>
+    }
+    getData();
+</script>
 </body>
 </html>
