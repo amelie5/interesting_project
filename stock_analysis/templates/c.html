@@ -6,73 +6,85 @@
    </head>
    <body style="height: 100%; margin: 0">
    <h1>{{ code }}</h1>
-       <div id="container" style="height: 80%"></div>
+       <div id="main" style="width: 900px;height:600px;"></div>
        <script type="text/javascript">
-var dom = document.getElementById("container");
-var myChart = echarts.init(dom);
-var app = {};
-option = null;
-var base = +new Date(2014, 9, 3);
-var oneDay = 24 * 3600 * 1000;
-var date = [];
-
-var data = [Math.random() * 150];
-var now = new Date(base);
-
-function addData(shift) {
-    now = [now.getFullYear(), now.getMonth() + 1, now.getDate()].join('/');
-    date.push(now);
-    data.push((Math.random() - 0.4) * 10 + data[data.length - 1]);
-
-    if (shift) {
-        date.shift();
-        data.shift();
-    }
-
-    now = new Date(+new Date(now) + oneDay);
-}
-
-for (var i = 1; i < 300; i++) {
-    addData();
-}
-
+var myChart = echarts.init(document.getElementById('main'));
 option = {
-    xAxis: {
-        type: 'category',
-        boundaryGap: false,
-        data: date
+    title: {
+        text: '动态数据',
+
     },
-    yAxis: {
-        boundaryGap: [0, '50%'],
-        type: 'value'
+    tooltip: {
+        trigger: 'axis'
     },
+    legend: {
+        data:['最新成交价']
+    },
+    toolbox: {
+        show: true,
+        feature: {
+            dataView: {readOnly: false},
+            restore: {},
+            saveAsImage: {}
+        }
+    },
+    dataZoom: {
+        show: false,
+        start: 0,
+        end: 100
+    },
+    xAxis: [
+        {
+            type: 'category',
+            boundaryGap: true,
+            data: (function (){
+                var now = new Date();
+                var res = [];
+                var len = 10;
+                while (len--) {
+                    res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
+                    now = new Date(now - 2000);
+                }
+                return res;
+            })()
+        }
+    ],
+    yAxis: [
+        {
+            type: 'value',
+            scale: true,
+            name: '价格',
+
+            boundaryGap: [0.2, 0.2]
+        }
+    ],
     series: [
         {
-            name:'成交',
+            name:'最新成交价',
             type:'line',
-            smooth:true,
-            symbol: 'none',
-            stack: 'a',
-            data: data
+            data:(function (){
+                var res = [];
+                var len = 0;
+                while (len < 10) {
+                    res.push((Math.random()*10 + 5).toFixed(1) - 0);
+                    len++;
+                }
+                return res;
+            })()
         }
     ]
 };
 
-setInterval(function () {
-    addData(true);
-    myChart.setOption({
-        xAxis: {
-            data: date
-        },
-        series: [{
-            name:'成交',
-            data: data
-        }]
-    });
-}, 500);;
-if (option && typeof option === "object") {
-    myChart.setOption(option, true);
-}
+
+setInterval(function (){
+    axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
+    console.log(axisData);
+    var data0 = option.series[0].data;
+    data0.push(Math.round(Math.random() * 1000));
+    option.xAxis[0].data.push(axisData);
+    myChart.setOption(option);
+}, 5100);
+
        </script>
    </body>
 </html>

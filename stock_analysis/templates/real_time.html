@@ -5,7 +5,7 @@
     <title>ECharts</title>
     <!-- 引入 echarts.js -->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='jquery-3.1.1.min.js') }}"></script>
 </head>
 <body>
 <h1>{{ code }}</h1>
@@ -15,9 +15,7 @@
     // 基于准备好的dom，初始化echarts实例
     var data=[];
     var time=[];
-    function setOption(data,time) {
-        console.log(time);
-                    console.log(data);
+
         var myChart = echarts.init(document.getElementById('main'));
         option = {
             title: {
@@ -28,13 +26,24 @@
             },
             xAxis: [
                 {
-                    type: 'time',
-                    data:new Date()
+                    type: 'category',
+                    AxisAtZero:false,
+                    data: (function (){
+                var now = new Date();
+                var res = [];
+                var len = 10;
+                while (len--) {
+                    res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
+                    now = new Date(now - 2000);
+                }
+                return res;
+            })()
                 }
             ],
             yAxis: [
                 {
-                    type: 'value'
+                    type: 'value',
+                    AxisAtZero:false
                 }
             ],
             series: [
@@ -42,12 +51,20 @@
                     name: 'price',
                     type: 'line',
                     symbol: 'none',//折线上的原点大小
-                    data: 1
+                    data:(function (){
+                var res = [];
+                var len = 0;
+                while (len < 10) {
+                    res.push(-(Math.random()*10 + 5).toFixed(1) - 0);
+                    len++;
+                }
+                return res;
+            })()
                 }
             ]
         };
         myChart.setOption(option);
-    }
+
     // 使用刚指定的配置项和数据显示图表。
 
     function getData() {
@@ -57,18 +74,19 @@
                 url: "/line", //把表单数据发送到/weather
                 dataType: "json",  //返回数据形式为json
                 success: function (result) {
+                        console.log('success')
+                        t=(new Date()).toLocaleTimeString().replace(/^\D*/,'');
+                        var data0 = option.series[0].data;
+                        data0.push((Math.random() * 10 + 5).toFixed(1) - 0);
+                        option.xAxis[0].data.push(t);
+                        myChart.setOption(option);
+                        console.log(option.xAxis[0].data);
+                         console.log(data0);
 
-
-                        time.push(new Date());
-                        data.push((Math.random() * 10 + 5).toFixed(1) - 0);
-
-
-                    setOption(data,time);
                 }
             });
     }
-    setInterval(
-        getData, 2100);
+    setInterval(getData, 3000);
 </script>
 </body>
 </html>

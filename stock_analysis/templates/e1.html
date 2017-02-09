@@ -5,10 +5,10 @@
     <title>ECharts</title>
     <!-- 引入 echarts.js -->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="{{ url_for('static', filename='jquery-3.1.1.min.js') }}"></script>
 </head>
 <body>
-<h1>{{ code }}</h1>
+<h1>{{ labels }}</h1>
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div id="main" style="width: 900px;height:600px;"></div>
 <script type="text/javascript">
@@ -52,22 +52,34 @@
     }
 
     //获取...排行数据
-    function getData() {
-        $.ajax({
-            url: '/e1e',
-            type: 'post',
-            dataType: 'JSON',
-            success: function (objdata) {
-                for (var i = 0; i < objdata.values.length; i++){
-                    var oneData = objdata.values[i];
+//    function getData() {
+//        $.ajax({
+//            url: '/e1e',
+//            type: 'post',
+//            dataType: 'JSON',
+//            success: function (objdata) {
+//                for (var i = 0; i < objdata.values.length; i++){
+//                    var oneData = objdata.values[i];
+//                    data.push(oneData);
+//                    type.push(objdata.labels[i])
+//                }
+//                setOption(data,type);//执行setOption函数。传参
+//            }
+//        });
+//    }
+
+    //获取...排行数据
+    function getData2(values,labels) {
+                for (var i = 0; i < values.length; i++){
+                    var oneData = values[i];
                     data.push(oneData);
-                    type.push(objdata.labels[i])
+                    type.push(labels[i])
                 }
                 setOption(data,type);//执行setOption函数。传参
-            }
-        });
+
     }
-    getData();
+    getData2({{values}},{{labels}});
+
 </script>
 </body>
 </html>

@@ -11,6 +11,10 @@ def index():
     values = [10, 9, 8, 7, 6, 4, 7, 8]
     return render_template('index.html', values=values, labels=labels)
 
+@app.route('/c')
+def c():
+    return render_template('c.html')
+
 @app.route('/charts')
 def e2():
     labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
@@ -19,9 +23,9 @@ def e2():
 
 @app.route('/e1')
 def e1():
-    labels = ["January", "February", "March", "April", "May"]
+    labels = ['January', 'February', 'March', 'April', 'May']
     values = [10, 9, 8, 7, 6]
-    return render_template('e1.html', code=values, labels=labels)
+    return render_template('e1.html', code=values, values=values, labels=labels)
 
 @app.route('/e1e', methods=["POST"])
 def e1e():
