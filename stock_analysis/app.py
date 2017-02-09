@@ -27,12 +27,6 @@ def e1():
     values = [10, 9, 8, 7, 6]
     return render_template('e1.html', code=values, values=values, labels=labels)
 
-@app.route('/e1e', methods=["POST"])
-def e1e():
-    labels = ["January", "February", "March", "April", "May"]
-    values = [10, 9, 8, 7, 6]
-    return  jsonify(values=values, labels=labels)
-
 
 @app.route('/code/<code>')
 def code(code=None):

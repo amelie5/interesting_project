@@ -74,14 +74,12 @@
                 url: "/line", //把表单数据发送到/weather
                 dataType: "json",  //返回数据形式为json
                 success: function (result) {
-                        console.log('success')
                         t=(new Date()).toLocaleTimeString().replace(/^\D*/,'');
                         var data0 = option.series[0].data;
                         data0.push((Math.random() * 10 + 5).toFixed(1) - 0);
                         option.xAxis[0].data.push(t);
                         myChart.setOption(option);
-                        console.log(option.xAxis[0].data);
-                         console.log(data0);
+
 
                 }
             });

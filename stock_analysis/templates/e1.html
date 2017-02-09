@@ -14,8 +14,8 @@
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var data = [];
-    var type=[];
-    function setOption(data,type) {
+    var type = [];
+    function setOption(data, type) {
         var myChart = echarts.init(document.getElementById('main'));
         option = {
             title: {
@@ -52,33 +52,37 @@
     }
 
     //获取...排行数据
-//    function getData() {
-//        $.ajax({
-//            url: '/e1e',
-//            type: 'post',
-//            dataType: 'JSON',
-//            success: function (objdata) {
-//                for (var i = 0; i < objdata.values.length; i++){
-//                    var oneData = objdata.values[i];
-//                    data.push(oneData);
-//                    type.push(objdata.labels[i])
-//                }
-//                setOption(data,type);//执行setOption函数。传参
-//            }
-//        });
-//    }
+    function getData() {
+        $.ajax({
+            url: '/e1e',
+            type: 'post',
+            dataType: 'JSON',
+            success: function (objdata) {
+                for (var i = 0; i < objdata.values.length; i++) {
+                    var oneData = objdata.values[i];
+                    data.push(oneData);
+                    type.push(objdata.labels[i])
+                }
+                console.log(data)
+                setOption(data, type);//执行setOption函数。传参
+            }
+        });
+    }
 
     //获取...排行数据
-    function getData2(values,labels) {
-                for (var i = 0; i < values.length; i++){
-                    var oneData = values[i];
-                    data.push(oneData);
-                    type.push(labels[i])
-                }
-                setOption(data,type);//执行setOption函数。传参
+    function getData2(values, labels) {
+        console.log(labels);
+        for (var i = 0; i < values.length; i++) {
+            var oneData = values[i];
+            data.push(oneData);
+            type.push(labels[i])
+        }
+        setOption(data, type);//执行setOption函数。传参
 
     }
-    getData2({{values}},{{labels}});
+    getData2({{values}},{{labels|tojson}});
+
+
 
 </script>
 </body>
