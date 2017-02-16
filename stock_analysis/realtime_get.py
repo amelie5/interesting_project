@@ -4,9 +4,10 @@ from tushare import *
 
 
 def work():
-    df = get_realtime_quotes('000581')  # Single stock symbol
-    df1 = df[['code', 'name', 'price', 'bid', 'ask', 'volume', 'amount', 'time']]
-    print(df1)
+    print('haha')
+    # df = df=get_today_all()  # Single stock symbol
+    # df1 = df[['code', 'name']]
+    # print(df1.head(5))
     # print('#' * 20)
     # s1 = select([test])  # 查询全表
     # print(s1)

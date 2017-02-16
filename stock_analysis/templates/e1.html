@@ -8,18 +8,17 @@
     <script src="{{ url_for('static', filename='jquery-3.1.1.min.js') }}"></script>
 </head>
 <body>
-<h1>{{ labels }}</h1>
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
 <div id="main" style="width: 900px;height:600px;"></div>
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var data = [];
     var type = [];
+    var myChart = echarts.init(document.getElementById('main'));
     function setOption(data, type) {
-        var myChart = echarts.init(document.getElementById('main'));
         option = {
             title: {
-                text: '跌停涨停个数',
+                text: '涨幅统计',
             },
             tooltip: {
                 trigger: 'axis'
@@ -71,15 +70,18 @@
 
     //获取...排行数据
     function getData2(values, labels) {
+        myChart.showLoading();
         console.log(labels);
         for (var i = 0; i < values.length; i++) {
             var oneData = values[i];
             data.push(oneData);
             type.push(labels[i])
         }
+        myChart.showLoading();
         setOption(data, type);//执行setOption函数。传参
 
     }
+
     getData2({{values}},{{labels|tojson}});
 
 

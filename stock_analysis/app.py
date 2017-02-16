@@ -1,9 +1,33 @@
-from flask import Flask, render_template,jsonify
-
+from flask import Flask, render_template, jsonify
+import tushare as ts
 from mysql import *
+
+from form import MyForm
+
+
+def transfer(x):
+    ntype = ''
+    if x >= 9.0:
+        ntype = '10'
+    elif x >= 5:
+        ntype = '5-10'
+    elif x >= 1:
+        ntype = '1-5'
+    elif x >= -1:
+        ntype = '-1-1'
+    elif x >= -5:
+        ntype = '-5- -1'
+    elif x > -9.0:
+        ntype = '-10- -5'
+    else:
+        ntype = '-10'
+    return ntype
+
 
 app = Flask(__name__)
 app.debug = True
+app.config['SECRET_KEY']='bendawang'
+
 
 @app.route('/')
 def index():
@@ -11,9 +35,20 @@ def index():
     values = [10, 9, 8, 7, 6, 4, 7, 8]
     return render_template('index.html', values=values, labels=labels)
 
+
 @app.route('/c')
 def c():
     return render_template('c.html')
+
+
+@app.route('/form', methods=['GET', 'POST'])
+def form():
+    form = MyForm()
+    if form.validate_on_submit():
+        name = form.name.data
+        print(name)
+    return render_template('form.html', form=form)
+
 
 @app.route('/charts')
 def e2():
@@ -21,16 +56,21 @@ def e2():
     values = [10, 9, 8, 7, 6, 4, 7, 8]
     return render_template('charts.html', values=values, labels=labels)
 
+
 @app.route('/e1')
 def e1():
-    labels = ['January', 'February', 'March', 'April', 'May']
-    values = [10, 9, 8, 7, 6]
-    return render_template('e1.html', code=values, values=values, labels=labels)
+    df = ts.get_today_all()
+    df['c'] = df.apply(lambda x: transfer(x['changepercent']), axis=1)
+    cnt = df.groupby(df['c']).size().rename('counts')
+    labels = list(cnt.index)
+    values = list(cnt)
+    return render_template('e1.html', values=values, labels=labels)
 
 
 @app.route('/code/<code>')
 def code(code=None):
     return render_template('real_time.html', code=code)
+
 
 @app.route('/line', methods=["POST"])
 def line():
@@ -38,8 +78,9 @@ def line():
     r1 = conn.execute(s1)
     res = r1.fetchall()
     print(x[0] for x in res)
-    return jsonify(time = [x[0] for x in res],
-                   data = [x[1] for x in res])
+    return jsonify(time=[x[0] for x in res],
+                   data=[x[1] for x in res])
+
 
 if __name__ == "__main__":
     app.run()
