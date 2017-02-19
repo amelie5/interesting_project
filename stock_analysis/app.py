@@ -2,7 +2,7 @@ from flask import Flask, render_template, jsonify
 import tushare as ts
 from mysql import *
 
-from form import MyForm
+# from form import MyForm
 
 
 def transfer(x):
@@ -38,16 +38,21 @@ def index():
 
 @app.route('/c')
 def c():
-    return render_template('c.html')
+    df = ts.get_tick_data('600848', date='2017-02-17').sort(columns='time')
+    list_time=df['time'].values.tolist()
+    list_price=df['price'].values.tolist()
+    start_price=df['price'].head(1).values
+    #list_price = df.apply(lambda x: x['changepercent']-start_price, axis=1).values.tolist()
+    return render_template('c.html',code='600848',date='2017-02-17',start_price=start_price,list_time=list_time,list_price=list_price)
 
 
-@app.route('/form', methods=['GET', 'POST'])
-def form():
-    form = MyForm()
-    if form.validate_on_submit():
-        name = form.name.data
-        print(name)
-    return render_template('form.html', form=form)
+# @app.route('/form', methods=['GET', 'POST'])
+# def form():
+#     form = MyForm()
+#     if form.validate_on_submit():
+#         name = form.name.data
+#         print(name)
+#     return render_template('form.html', form=form)
 
 
 @app.route('/charts')

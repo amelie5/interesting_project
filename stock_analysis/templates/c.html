@@ -1,90 +1,63 @@
 <!DOCTYPE html>
 <html style="height: 100%">
-   <head>
-       <meta charset="utf-8">
-       <script src="{{ url_for('static', filename='echarts.js') }}"></script>
-   </head>
-   <body style="height: 100%; margin: 0">
-   <h1>{{ code }}</h1>
-       <div id="main" style="width: 900px;height:600px;"></div>
-       <script type="text/javascript">
-var myChart = echarts.init(document.getElementById('main'));
-option = {
-    title: {
-        text: '动态数据',
-
-    },
-    tooltip: {
-        trigger: 'axis'
-    },
-    legend: {
-        data:['最新成交价']
-    },
-    toolbox: {
-        show: true,
-        feature: {
-            dataView: {readOnly: false},
-            restore: {},
-            saveAsImage: {}
-        }
-    },
-    dataZoom: {
-        show: false,
-        start: 0,
-        end: 100
-    },
-    xAxis: [
-        {
+<head>
+    <meta charset="utf-8">
+    <script src="{{ url_for('static', filename='echarts.js') }}"></script>
+</head>
+<body style="height: 100%; margin: 0">
+<h1>
+    <center>{{ date }}  {{ code }}分时价格</center>
+</h1>
+<div id="main" style="width: 900px;height:600px;"></div>
+<script type="text/javascript">
+    var data = [];
+    var type = [];
+    var myChart = echarts.init(document.getElementById('main'));
+    function setOption(data, type,price0) {
+        console.log(price0)
+    option = {
+        xAxis: {
             type: 'category',
             boundaryGap: true,
-            data: (function (){
-                var now = new Date();
-                var res = [];
-                var len = 10;
-                while (len--) {
-                    res.unshift(now.toLocaleTimeString().replace(/^\D*/,''));
-                    now = new Date(now - 2000);
-                }
-                return res;
-            })()
-        }
-    ],
-    yAxis: [
-        {
+            data: type
+        },
+        yAxis: {
             type: 'value',
-            scale: true,
-            name: '价格',
-
-            boundaryGap: [0.2, 0.2]
-        }
-    ],
-    series: [
-        {
-            name:'最新成交价',
-            type:'line',
-            data:(function (){
-                var res = [];
-                var len = 0;
-                while (len < 10) {
-                    res.push((Math.random()*10 + 5).toFixed(1) - 0);
-                    len++;
+            axisLabel: {
+                formatter: function (value) {
+                    return value + 22.17;
                 }
-                return res;
-            })()
-        }
-    ]
-};
-
-
-setInterval(function (){
-    axisData = (new Date()).toLocaleTimeString().replace(/^\D*/,'');
-    console.log(axisData);
-    var data0 = option.series[0].data;
-    data0.push(Math.round(Math.random() * 1000));
-    option.xAxis[0].data.push(axisData);
+            },
+        },
+        series: [
+            {
+                name: '价格',
+                type: 'line',
+                smooth: true,
+                showSymbol: false,
+                symbol: false,
+                data: data,
+            }
+        ]
+    };
     myChart.setOption(option);
-}, 5100);
+    }
+    //获取...排行数据
+    function getData(values, labels,price0) {
 
-       </script>
-   </body>
+        console.log(values);
+        for (var i = 0; i < values.length; i++) {
+            var oneData = values[i];
+            data.push(oneData-price0);
+            type.push(labels[i])
+        }
+
+        setOption(data, type,price0);//执行setOption函数。传参
+
+    }
+
+    getData({{list_price}},{{list_time|tojson}},{{start_price}});
+
+</script>
+</body>
 </html>
