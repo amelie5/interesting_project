@@ -105,7 +105,7 @@ def func_one(code):
     date_list = get_teding_date(code)
     for date in date_list:
         list=get_one_data(code, date)
-        data_list.append(list)
+        data_list.extend(list)
     return data_list
 
 
