@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'ghost'
-from spider.spider import func_one,get_one_data
+from spider.spider_longhu import func_one,get_one_data
 from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String, DATE, FLOAT, DateTime
 
 # 连接数据库
