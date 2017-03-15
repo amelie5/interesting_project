@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'ghost'
-from spider.spider_holder import get_holder,get_top10
-from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String, DATE, FLOAT, DateTime
+from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String
+
+from stock_analysis.spider_holder import get_holder
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')

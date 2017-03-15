@@ -60,7 +60,7 @@ def get_one_data(code, ctime):
     ntype = 'b'
     trader = ''
     cnt = 0
-    url = 'http://data.10jqka.com.cn/ifmarket/getnewlh/code/' + code + '/date/' + ctime + '/'
+    url = 'http://data.10jqka.com.cn/ifmarket/getnewlh/code/' + code + '/date/' + ctime + '/rid/6/'
     html = requests.get(url).text
     p = pq(html).find('tr')
     for d in p:

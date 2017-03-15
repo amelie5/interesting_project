@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 
 __author__ = 'ghost'
-from spider.spider_longhu import func_one,get_one_data
-from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String, DATE, FLOAT, DateTime
+from sqlalchemy import create_engine, Table, Column, MetaData, String, FLOAT, DateTime
+
+from stock_analysis.spider_longhu import func_one
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -22,11 +23,8 @@ code_type = Table('code_type', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-print('#' * 20)
-# s1 = 'select * from code_type'  # 查询全表
-# r1 = conn.execute(s1)
-# res = r1.fetchall()
-# for x in res:
-code = '603117'
+code = '300490'
 d = func_one(code)
-r = conn.execute(longhubang_shandong.insert(), d)  # conn.execute("delete from longhubang_shandong")
+# conn.execute("delete from longhubang_shandong")
+r = conn.execute(longhubang_shandong.insert(), d)
+

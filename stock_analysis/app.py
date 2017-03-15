@@ -1,6 +1,7 @@
 from flask import Flask, render_template, jsonify
 import tushare as ts
 from mysql import *
+from spider_all import get_zs
 
 # from form import MyForm
 
@@ -34,6 +35,12 @@ def index():
     labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
     values = [10, 9, 8, 7, 6, 4, 7, 8]
     return render_template('index.html', values=values, labels=labels)
+
+
+@app.route('/zs_table')
+def zs_table():
+    df=get_zs()
+    return render_template('zs_table.html', values=df)
 
 
 @app.route('/c')
