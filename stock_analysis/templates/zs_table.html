@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<title>zs</title>
+<link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+</head>
+<body><h1>zs</h1>
+
+{% set users=[{'name':'Tom','gender':'M','age':20},
+              {'name':'John','gender':'M','age':18},
+              {'name':'Mary','gender':'F','age':24}]
+%}
+
+{% call list_users(users) %}
+    <td><input name="delete" type="button" value="Delete"></td>
+{% endcall %}
+{% macro list_users(users) -%}
+  <table>
+    <tr><th>Name</th><th>Action</th></tr>
+    {%- for user in users %}
+      <tr><td>{{ user.name |e }}</td>{{ caller() }}</tr>
+    {%- endfor %}
+  </table>
+{%- endmacro %}
+</body>
+</html>
