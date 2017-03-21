@@ -17,7 +17,7 @@ def get_list(date):
 
 
 def get_teding_date(code):
-    date_list=[]
+    date_list = []
     url = 'http://data.10jqka.com.cn/market/lhbcjmx/code/' + code + '/#refCountId=data_55a3b816_507'
     html = requests.get(url).text
     p = pq(html).find('select>option')
@@ -54,30 +54,26 @@ def get_teding_date(code):
 #     dict = {'code': code, 'ntype': ntype, 'traders': trader, 'ctime': ctime}
 #     r_list.append(dict)
 
-
+#dong_fang_cai_fu data
 def get_one_data(code, ctime):
     r_list = []
     ntype = 'b'
-    trader = ''
-    cnt = 0
-    url = 'http://data.10jqka.com.cn/ifmarket/getnewlh/code/' + code + '/date/' + ctime + '/rid/6/'
+    url = 'http://data.eastmoney.com/stock/lhb,' + ctime + ',' + code + '.html'
     html = requests.get(url).text
-    p = pq(html).find('tr')
+    p = pq(html).find('table#tab-2>tbody>tr')
     for d in p:
         trader = pq(pq(d).find('td').eq(1)).find('a').text()
-        if (trader == ''):
-            cnt = cnt + 1
-        else:
-            if cnt<3:
-                fund=pq(pq(d).find('td').eq(2)).text()
-            else:
-                fund=pq(pq(d).find('td').eq(4)).text()
-            dict = {'code': code, 'ntype': ntype, 'trader': trader, 'ctime': ctime,'fund':fund}
-            r_list.append(dict)
-        if (cnt == 3):
-            ntype = 's'
-            trader = ''
-            cnt = cnt + 1
+        fund = pq(pq(d).find('td').eq(2)).text()
+        dict = {'code': code, 'ntype': ntype, 'trader': trader, 'ctime': ctime, 'fund': fund}
+        r_list.append(dict)
+    p = pq(html).find('table#tab-4>tbody>tr')
+    ntype = 's'
+    for d in p:
+        trader = pq(pq(d).find('td').eq(1)).find('a').text()
+        fund = pq(pq(d).find('td').eq(4)).text()
+        dict = {'code': code, 'ntype': ntype, 'trader': trader, 'ctime': ctime, 'fund': fund}
+        r_list.append(dict)
+
     return r_list
 
 
@@ -101,14 +97,14 @@ def func():
 
 
 def func_one(code):
-    data_list=[]
+    data_list = []
     date_list = get_teding_date(code)
     for date in date_list:
-        list=get_one_data(code, date)
+        list = get_one_data(code, date)
         data_list.extend(list)
     return data_list
 
 
 if __name__ == '__main__':
-    list=get_one_data('300099', '2017-02-17')
+    list = get_one_data('000877', '2017-03-02')
     print(list)
