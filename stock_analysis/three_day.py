@@ -1,4 +1,5 @@
 from datetime import datetime
+from datetime import timedelta
 import pandas as pd
 from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String, DATE, FLOAT, INT
 import tushare as ts
@@ -43,7 +44,6 @@ def get_data():
             r = conn.execute(p_change.insert(), dict)
 
 def analysis():
-
     engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
     conn = engine.connect()
     r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00')
@@ -76,6 +76,29 @@ def analysis():
         df.sort_values(by='p_change', ascending=False, inplace=True)
         print(df)
 
+def three_day_for_day(end_date,day_day):
+    a_list=[]
+    end_date=datetime.strptime(end_date, "%Y-%m-%d")
+    start_date=(end_date - timedelta(days=10)).strftime("%Y-%m-%d")
+
+    engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+    conn = engine.connect()
+    r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s','2017-03-20')
+    res = r1.fetchall()
+    for x in res:
+        code=x[0]
+        name=x[1]
+        df=ts.get_hist_data(code,start=str(start_date),end=str(end_date))
+        df.reset_index(level=0, inplace=True)
+        df=df[['date','p_change']]
+        df=df[0:day_day].sum()
+        dict = {'date': df[0], 'p_change': df[1],'code':code,'name':name}
+        a_list.append(dict)
+
+    df_all = pd.DataFrame(a_list)
+    df_all.sort_values(by='p_change', inplace=True,ascending=False)
+    df_all.to_excel('d:/data/stock/%s_day_%s.xlsx'%(day_day,end_date))
+
 if __name__ == '__main__':
-    analysis()
+    three_day_for_day("2017-04-07",3)
 

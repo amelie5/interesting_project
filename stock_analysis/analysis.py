@@ -1,5 +1,6 @@
 import pandas as pd
 import tushare as ts
+from sqlalchemy import create_engine
 
 def get_data():
     code='002337'
@@ -9,12 +10,12 @@ def get_data():
     df.reset_index(drop=True, inplace=True)
     return df
 
-def get_all_data():
-    code='002337'
-    df = ts.get_hist_data(code, start='2015-01-01', end='2015-02-16')
+def get_all_data(code):
+    print(code)
+    df = ts.get_hist_data(code, start='2016-01-01', end='2017-03-27')
     df=df[[ 'p_change']]
     df.reset_index(level=0, inplace=True)
-    benchmark = ts.get_hist_data('sh', start='2015-01-01', end='2015-02-16')
+    benchmark = ts.get_hist_data('sh', start='2016-01-01', end='2017-03-27')
     benchmark=benchmark[['p_change']]
     benchmark.reset_index(level=0, inplace=True)
     df_all=pd.merge(df,benchmark,how='left',on='date')
@@ -42,6 +43,15 @@ def max_drawdown(df):
 def beta(df):
     b=df['rtn'].cov(df['benchmark_rtn'])/df['benchmark_rtn'].var()
     print('beta: %f'%b)
+    #越大越不相关
 
 if __name__ == '__main__':
-    beta(get_all_data())
+    # 连接数据库
+    engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+    conn = engine.connect()
+    print('#' * 20)
+    s1 = 'select * from stock_basics where timeToMarket<2017-01-19'  # 查询全表
+    r1 = conn.execute(s1)
+    res = r1.fetchall()
+    for x in res:
+        beta(get_all_data(x[0]))

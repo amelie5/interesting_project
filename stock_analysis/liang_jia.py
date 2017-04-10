@@ -13,7 +13,7 @@ import pandas as pd
 
 day_num=5
 #df=ts.get_today_ticks('600403')
-df=ts.trade_cal()
+df=ts.get_today_all()
 print(df)
 # df=ts.get_today_all()
 # df1=ts.get_today_all()
