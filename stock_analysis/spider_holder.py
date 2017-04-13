@@ -1,11 +1,11 @@
 # coding=utf-8
-import datetime
+import pandas as pd
 import requests
 from pyquery import PyQuery as pq
 
 
 def get_holder(code):
-    r_list = []
+    df = pd.DataFrame()
     url = 'http://stock.finance.qq.com/corp1/stk_holder_count.php?zqdm='+code
     html = requests.get(url).text
     p = pq(html).find('table.list>tr')
@@ -19,33 +19,41 @@ def get_holder(code):
             if date=='2014-06-30':
                 break
             else:
-                amount = pq(d).find('td').eq(1).text()
-                dict = {'code': code, 'holder': amount, 'ctime': date}
-                r_list.append(dict)
+                holders = pq(d).find('td').eq(1).text()
+                holders = float(holders.replace(",", ''))
+                amount = pq(d).find('td').eq(4).text()
+                amount = float(amount.replace(",", ''))
+                df = df.append({'code': code, 'holders': holders,'amount': amount, 'date': date},ignore_index=True)
 
-    return r_list
+    return df
 
 
 def get_top10(code):
-    r_list = []
-    url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code
+    df = pd.DataFrame()
+    url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code+'&type=2016'
     html = requests.get(url).text
     p = pq(html).find('table.list>tr')
     cnt = 0
     for d in p:
         cnt += 1
-        if cnt <= 2:
+        if cnt <= 2+13:
             continue
         else:
             name= pq(d).find('td').eq(1).text()
-            amount = pq(d).find('td').eq(2).text()
-            type = pq(d).find('td').eq(3).text()
-            percent = pq(d).find('td').eq(4).text()
-            change = pq(d).find('td').eq(5).text()
-            dict = {'code': code, 'amount': amount, 'name': name,'type': type, 'percent': percent, 'change': change}
-            r_list.append(dict)
+            if name=='':
+                break
+            else:
+                amount =pq(d).find('td').eq(2).text()
+                amount = amount.replace(",", '')
+                amount = float(amount)
+                type = pq(d).find('td').eq(3).text()
+                percent = pq(d).find('td').eq(4).text()
+                percent=float(percent.replace("%", ''))
+                change = pq(d).find('td').eq(5).text()
+                df = df.append({'code': code, 'amount': amount, 'company': name,'type': type, 'percent': percent, 'change': change,'date':''}, ignore_index=True)
 
-    return r_list
+    return df
 
 if __name__ == '__main__':
-    list=get_holder('600403')
+    list=get_top10('600917')
+    print(list)

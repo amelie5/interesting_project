@@ -1,8 +1,9 @@
 # -*- coding: utf-8 -*-
 __author__ = 'amelie'
 
-from sqlalchemy import create_engine,Table,Column,MetaData,Integer,String,DATE,FLOAT,INT
 import tushare as ts
+from sqlalchemy import create_engine,Table,Column,MetaData,Integer,String,DATE,FLOAT
+
 df=ts.get_stock_basics()
 df.reset_index(level=0, inplace=True)
 df1=df[["code","name","outstanding","timeToMarket","holders"]]

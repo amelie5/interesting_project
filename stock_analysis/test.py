@@ -32,13 +32,24 @@ import re
 # result=re.compile(r'ObjectId\(\"(.*)\"\)').findall(s)
 # print(result)
 
+import re
+s='http://q.10jqka.com.cn/gn/detail/code/301558/'
+result=re.compile(r'code\/(.*)\/').findall(s)
+print(result)
+
+
 import pandas as pd
 #from spider_all import get_zs
 #设置最大打印行数
 # pd.set_option('display.max_rows', 3000)
 # df = get_zs()
 # print(df)
-code='002807'
-df = ts.get_tick_data(code,date='2017-02-10')
+code='300603'
+#df = ts.get_tick_data(code,date='2017-02-03')
 #直接保存
-df.to_excel('d:/data/stock/%s.xlsx'%code)
+#df.to_excel('d:/data/stock/%s.xlsx'%code)
+
+
+
+# df=ts.get_concept_classified()
+# print(df)

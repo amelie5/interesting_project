@@ -1,18 +1,11 @@
 from datetime import datetime, timedelta
 
-from tushare import *
+from stock_analysis.spider_all import get_zs_tonghuashun
 
 
 def work():
-    print('haha')
-    # df = df=get_today_all()  # Single stock symbol
-    # df1 = df[['code', 'name']]
-    # print(df1.head(5))
-    # print('#' * 20)
-    # s1 = select([test])  # 查询全表
-    # print(s1)
-    # r1 = conn.execute(s1)
-    # print(r1.fetchall())
+    df = get_zs_tonghuashun()
+    print(df)
 
 
 def runTask(func, day=0, hour=0, min=0, second=0):
@@ -41,5 +34,5 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Continue next iteration
           continue
 
-runTask(work, min=5/60)
+runTask(work, min=10/60)
 #runTask(work, day=1, hour=2, min=1)
