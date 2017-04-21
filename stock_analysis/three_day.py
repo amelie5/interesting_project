@@ -4,7 +4,7 @@ from datetime import timedelta
 
 import pandas as pd
 import tushare as ts
-from sqlalchemy import create_engine, Table, Column, MetaData, String, TIMESTAMP, FLOAT
+from sqlalchemy import create_engine, Table, Column, MetaData, String, TIMESTAMP, FLOAT,DATE
 
 DAY_NEM = 5
 
@@ -31,7 +31,7 @@ def get_data():
     for x in res:
         code = x[0]
         print(code)
-        df = ts.get_hist_data(code, start='2017-04-11')
+        df = ts.get_hist_data(code, start='2017-04-17')
         df = df[['p_change', 'volume']]
         df.reset_index(level=0, inplace=True)
         df['code'] = code
@@ -44,6 +44,10 @@ def get_data():
     # dict_2 = df_all.to_dict(orient='records')
     # r = conn.execute(p_change.insert(), dict_2)
 
+def get_data_today():
+    df=ts.get_today_all()
+    df = df[['code', 'changepercent', 'volume', 'turnoverratio']]
+    dict = df.to_dict(orient='records')
 
 def analysis():
     engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -102,5 +106,58 @@ def three_day_for_day(end_date, day_day):
     df_all.to_excel('d:/data/stock/%s_day_%s.xlsx' % (day_day, end_date))
 
 
+def n_day_analysis():
+    df_a = pd.DataFrame()
+
+    engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+    metadata = MetaData()
+    # 定义表
+    max_change = Table('max_change', metadata,
+                    Column('code', String(10), nullable=False),
+                    Column('max_change', FLOAT, nullable=False),
+                    Column('start', DATE, nullable=False),
+                    Column('end', DATE, nullable=False)
+                    )
+    # 初始化数据库
+    metadata.create_all(engine)
+    conn = engine.connect()
+    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-03-20')
+    res1 = r1.fetchall()
+    for x in res1:
+        last = result = 0
+        start = end = ''
+        code = x[0]
+        print(code)
+        time_to_open=x[6]
+        if time_to_open==None:
+            time_to_open='2017-01-01'
+        else:
+            time_to_open=time_to_open.strftime("%Y-%m-%d")
+        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-01-01','2017-04-14')
+        res = r.fetchall()
+        if not res:
+            continue
+        new_start=res[0][0].strftime("%Y-%m-%d")
+        for j in res:
+            last =last + j[2]
+            if last>=result:
+                result=last
+                start=new_start
+                end=j[0]
+            elif last<0:
+                last=0
+                new_start=j[0].strftime("%Y-%m-%d")
+        if start=='':
+            end=start=new_start
+        d = {'start': start,'end':end, 'max_change': result, 'code': code}
+        conn.execute(max_change.insert(), d)
+
+
+    # d = df_a.to_dict(orient='records')
+    # conn.execute("delete from max_change")
+
+
+
 if __name__ == '__main__':
-    get_data()
+    n_day_analysis()
+

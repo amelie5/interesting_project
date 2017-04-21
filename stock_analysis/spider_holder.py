@@ -3,6 +3,7 @@ import pandas as pd
 import requests
 from pyquery import PyQuery as pq
 import re
+import json
 
 
 def get_holder(code):
@@ -27,6 +28,15 @@ def get_holder(code):
                 df = df.append({'code': code, 'holders': holders, 'amount': amount, 'date': date}, ignore_index=True)
 
     return df
+
+def get_holder_dongfang():
+    url = 'http://data.eastmoney.com/DataCenter_V3/gdhs/GetList.ashx?pagesize=10&page=1'
+    html = requests.get(url).text
+    json_list = json.loads(html)
+    for json_dict in json_list:
+        date=json_dict['EndDate']
+        holders=json_dict['HolderNum']
+        print(date,holders)
 
 
 def get_top10(code):
@@ -98,5 +108,4 @@ def get_top10(code):
 
 
 if __name__ == '__main__':
-    list = get_top10('300637')
-    print(list)
+    get_holder_dongfang()

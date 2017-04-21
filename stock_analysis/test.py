@@ -33,9 +33,9 @@ import re
 # print(result)
 
 import re
-s='http://q.10jqka.com.cn/gn/detail/code/301558/'
-result=re.compile(r'code\/(.*)\/').findall(s)
-print(result)
+# s='流通股东名单 报告期： 2016-12-31 公告日期： --'
+# result=re.compile(r'报告期： (.*) 公告日期').findall(s)
+# print(13/13)
 
 
 import pandas as pd
@@ -53,3 +53,22 @@ code='300603'
 
 # df=ts.get_concept_classified()
 # print(df)
+
+#取补集
+# df1 = DataFrame({
+# 'Buyer': ['Carl', 'Carl', 'Carl'],
+# 'Quantity': [18, 3, 5, ]})
+#
+# df2 = DataFrame({
+# 'Buyer': ['Carl', 'Mark', 'Carl', 'Carl'],
+# 'Quantity': [2, 1, 18, 5]})
+# df= df1.merge(df2, indicator=True, how='outer')
+# df=df[df['_merge'] == 'right_only']
+# print(df)
+
+
+ints = [8, 23, 45, 12, 78]
+for idx, val in enumerate(ints):
+    print (idx, val)
+
+print(ints[3])

@@ -1,10 +1,17 @@
+#coding: utf-8
 from datetime import datetime, timedelta
-
+import logging
 from stock_analysis.spider_all import get_zs_tonghuashun
 
+logging.basicConfig(level=logging.INFO,
+                format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
+                datefmt='%a, %d %b %Y %H:%M:%S',
+                filename='zs.log',
+                filemode='a')
 
 def work():
     df = get_zs_tonghuashun()
+    logging.info(df)
     print(df)
 
 
@@ -34,5 +41,5 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Continue next iteration
           continue
 
-runTask(work, min=10/60)
+runTask(work, min=60/60)
 #runTask(work, day=1, hour=2, min=1)

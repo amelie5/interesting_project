@@ -3,7 +3,7 @@ import re
 import pandas as pd
 import requests
 from pyquery import PyQuery as pq
-
+import tushare as ts
 
 def get_zs_tonghuashun():
     r_list = []
@@ -79,8 +79,20 @@ def get_concept_name():
         list.append(tup)
     return list
 
+def get_spec_today():
+    df=ts.get_today_all()
+    df=df[['code','name','changepercent','amount','turnoverratio']]
+    #保留跌幅在7以上，但是成交量只有几千万
+    df=df[df['changepercent'] <=-7]
+    df = df[df['amount'] <= 100000000]
+    df.sort_values(by='amount', inplace=True)
+    print(df)
+    df.to_excel('d:/data/stock/2017-04-17.xlsx')
+
+
+
 
 if __name__ == '__main__':
-    df = get_zs_tonghuashun()
-    print(df)
+    df = get_spec_today()
+
 
