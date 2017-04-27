@@ -1,7 +1,7 @@
 #coding: utf-8
 from datetime import datetime, timedelta
 import logging
-from stock_analysis.spider_all import get_zs_tonghuashun
+from stock_analysis.spider_all import get_zs_tonghuashun,get_tx_minite
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
@@ -10,9 +10,15 @@ logging.basicConfig(level=logging.INFO,
                 filemode='a')
 
 def work():
-    df = get_zs_tonghuashun()
-    logging.info(df)
-    print(df)
+    list_all=[]
+    # df = get_zs_tonghuashun()
+    # logging.info(df)
+    # print(df)
+    list=get_tx_minite()
+    import itertools
+    it = itertools.groupby(list)
+    list_all=list_all+it
+
 
 
 def runTask(func, day=0, hour=0, min=0, second=0):
@@ -41,5 +47,5 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Continue next iteration
           continue
 
-runTask(work, min=60/60)
+runTask(work, min=5/60)
 #runTask(work, day=1, hour=2, min=1)

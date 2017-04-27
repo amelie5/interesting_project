@@ -18,7 +18,7 @@ def get_holder(code):
             continue
         else:
             date = pq(d).find('td').eq(0).text()
-            if date == '2014-06-30':
+            if date == '2013-12-31':
                 break
             else:
                 holders = pq(d).find('td').eq(1).text()
@@ -41,7 +41,7 @@ def get_holder_dongfang():
 
 def get_top10(code):
     df = pd.DataFrame()
-    url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code + '&type=2016'
+    url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code + '&type=2017'
     html = requests.get(url).text
     p = pq(html).find('table.list>tr')
     cnt = 0

@@ -25,7 +25,7 @@ def get_data():
     metadata.create_all(engine)
     # 获取数据库连接
     conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s', '2017-03-27')
+    r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s', '2017-03-31')
     res = r1.fetchall()
     a_list=[]
     for x in res:
@@ -121,7 +121,7 @@ def n_day_analysis():
     # 初始化数据库
     metadata.create_all(engine)
     conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-03-20')
+    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-03-27')
     res1 = r1.fetchall()
     for x in res1:
         last = result = 0
@@ -133,7 +133,7 @@ def n_day_analysis():
             time_to_open='2017-01-01'
         else:
             time_to_open=time_to_open.strftime("%Y-%m-%d")
-        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-01-01','2017-04-14')
+        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-01-01','2017-04-26')
         res = r.fetchall()
         if not res:
             continue

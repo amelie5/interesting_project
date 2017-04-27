@@ -5,6 +5,19 @@ import requests
 from pyquery import PyQuery as pq
 import tushare as ts
 
+
+def get_tx_minite():
+    url='http://push2.gtimg.cn/q=sz000078'
+    str = requests.get(url).text
+    import re
+    str = re.findall(r'(\d\d:\d\d:\d\d/.*)~2017', str)[0]
+    str_arr=str.split('|')
+    print(type(str_arr))
+    return str_arr
+    for str in str_arr[::-1]:
+        print(str)
+
+
 def get_zs_tonghuashun():
     r_list = []
     cnt=0
@@ -93,6 +106,6 @@ def get_spec_today():
 
 
 if __name__ == '__main__':
-    df = get_spec_today()
+    get_tx_minite()
 
 
