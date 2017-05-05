@@ -3,7 +3,7 @@
 __author__ = 'amelie'
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String,DATE
 
-from stock_analysis.spider_holder import get_top10
+from stock_analysis.spider_holder import get_top10,get_top10_2017
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -30,7 +30,7 @@ res = r1.fetchall()
 for x in res:
     code = x[0]
     print(code)
-    df = get_top10(code)
+    df = get_top10_2017(code)
     if (df.empty):
         pass
     else:

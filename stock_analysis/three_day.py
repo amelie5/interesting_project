@@ -25,13 +25,13 @@ def get_data():
     metadata.create_all(engine)
     # 获取数据库连接
     conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s', '2017-03-31')
+    r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s', '2017-04-07')
     res = r1.fetchall()
     a_list=[]
     for x in res:
         code = x[0]
         print(code)
-        df = ts.get_hist_data(code, start='2017-04-17')
+        df = ts.get_hist_data(code, start='2017-04-27')
         df = df[['p_change', 'volume']]
         df.reset_index(level=0, inplace=True)
         df['code'] = code
@@ -159,5 +159,5 @@ def n_day_analysis():
 
 
 if __name__ == '__main__':
-    n_day_analysis()
+    get_data()
 

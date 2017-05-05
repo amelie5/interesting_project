@@ -23,23 +23,27 @@ def get_holder(code):
             else:
                 holders = pq(d).find('td').eq(1).text()
                 holders = float(holders.replace(",", ''))
-                amount = pq(d).find('td').eq(4).text()
-                amount = float(amount.replace(",", ''))
-                df = df.append({'code': code, 'holders': holders, 'amount': amount, 'date': date}, ignore_index=True)
-
+                df = df.append({'code': code, 'holders': holders, 'date': date}, ignore_index=True)
     return df
 
 def get_holder_dongfang():
-    url = 'http://data.eastmoney.com/DataCenter_V3/gdhs/GetList.ashx?pagesize=10&page=1'
-    html = requests.get(url).text
-    json_list = json.loads(html)
-    for json_dict in json_list:
-        date=json_dict['EndDate']
-        holders=json_dict['HolderNum']
-        print(date,holders)
+    df = pd.DataFrame()
+    for page in range(1,16):
+        print('page: {}'.format(page))
+        url = 'http://data.eastmoney.com/DataCenter_V3/gdhs/GetList.ashx?pagesize=200&page='+str(page)
+        html = requests.get(url).text
+        json_list = json.loads(html)
+        data = json_list['data']
+        for one in data:
+            code=one['SecurityCode']
+            date=one['EndDate']
+            date = re.findall(r'(.*)T', date)[0]
+            holders=one['HolderNum']
+            df = df.append({'code': code, 'holders': holders, 'date': date}, ignore_index=True)
+    return df
 
 
-def get_top10(code):
+def get_top10_2017(code):
     df = pd.DataFrame()
     url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code + '&type=2017'
     html = requests.get(url).text
@@ -50,7 +54,8 @@ def get_top10(code):
             date = pq(d).find('th').text()
             if date == "流通股东名单":
                 break
-            date = re.compile(r'报告期： (.*) 公告日期').findall(date)[0]
+            #date = re.compile(r'报告期： (.*) 公告日期').findall(date)[0]
+            date='2017-03-31'
         if (cnt % 13 == 0) | ((cnt - 1) % 13 == 0) | ((cnt - 12) % 13 == 0):
             cnt = cnt + 1
             continue

@@ -79,5 +79,7 @@ code='300603'
 # a=re.findall(r'(\d\d:\d\d:\d\d/.*)~2017', line)
 # print(a)
 
-df = ts.get_today_ticks('000078') #Single stock symbol
-print(df)
+line = '2017/04/28T00:00:000'
+import re
+a=re.findall(r'(.*)T', line)
+print(a)

@@ -4,7 +4,7 @@ import pandas as pd
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, Integer
 
-START_DAY = '2016-11-01'
+START_DAY = '2016-05-01'
 NOTIFY_DAY = 60
 
 
