@@ -79,7 +79,14 @@ code='300603'
 # a=re.findall(r'(\d\d:\d\d:\d\d/.*)~2017', line)
 # print(a)
 
-line = '2017/04/28T00:00:000'
-import re
-a=re.findall(r'(.*)T', line)
-print(a)
+# line = '2017-12-15'
+# import re
+# a=re.findall(r'2017-(.*)-', line)
+# print(a)
+
+
+# df = ts.get_h_data(code, start='2017-05-10')
+# print(df)
+# df.reset_index(level=0, inplace=True)
+# print(df)
+# print(df['date'])

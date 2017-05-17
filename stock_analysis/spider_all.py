@@ -1,5 +1,7 @@
 # coding=utf-8
 import re
+from datetime import datetime
+
 import pandas as pd
 import requests
 from pyquery import PyQuery as pq
@@ -75,7 +77,9 @@ def get_concept(list):
             else:
                 for d in p:
                     code = pq(d).find('td').eq(1).text()
-                    df = df.append({"code": code, "concept": tup[0] },ignore_index=True)
+                    concept=tup[0]
+                    print(concept)
+                    df = df.append({"code": code, "concept": concept },ignore_index=True)
 
     return df
 
@@ -102,10 +106,50 @@ def get_spec_today():
     print(df)
     df.to_excel('d:/data/stock/2017-04-17.xlsx')
 
+def get_comment_1():
+    code='601003'
+    cnt=0
+    for page in range(1,10):
+        url='http://guba.eastmoney.com/list,{},f_{}.html'.format(code,page)
+        html = requests.get(url).text
+        p = pq(html).find('div.articleh')
+        for d in p:
+            date = '2017-{}'.format(pq(d).find('span.l6').text())
+            date = datetime.strptime(date, "%Y-%m-%d")
+            if date>=datetime.strptime('2017-05-14',"%Y-%m-%d"):
+                continue
+            if date<datetime.strptime('2017-05-13',"%Y-%m-%d"):
+                break
+            content = pq(d).find('span.l3>a').text()
+            print(content, date)
+            cnt=cnt+1
+    print(code,cnt)
 
+
+def get_comment(code):
+    df = pd.DataFrame()
+    flag=True
+    for page in range(83,10000000000):
+        if(flag):
+            url='http://guba.eastmoney.com/list,{},f_{}.html'.format(code,page)
+            html = requests.get(url).text
+            p = pq(html).find('div.articleh')
+            for d in p:
+                date = '2017-{}'.format(pq(d).find('span.l6').text())
+                month = re.findall(r'2017-(.*)-', date)[0]
+                if month=='12':
+                    flag=False
+                    break
+                else:
+                    df = df.append({'date': date}, ignore_index=True)
+        else:
+            break
+    grouped=df.groupby(df['date']).size().rename('counts')
+
+    return  df
 
 
 if __name__ == '__main__':
-    get_tx_minite()
+    get_comment('601003')
 
 

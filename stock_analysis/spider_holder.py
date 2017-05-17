@@ -79,7 +79,7 @@ def get_top10_2017(code):
 
 def get_top10(code):
     df = pd.DataFrame()
-    url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code + '&type=2016'
+    url = 'http://stock.finance.qq.com/corp1/stk_ciholder.php?zqdm=' + code + '&type=2015'
     html = requests.get(url).text
     p = pq(html).find('table.list')
     cnt = 0

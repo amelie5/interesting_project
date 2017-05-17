@@ -4,7 +4,7 @@ import pandas as pd
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, Integer
 
-START_DAY = '2016-05-01'
+START_DAY = '2017-04-01'
 NOTIFY_DAY = 60
 
 
@@ -34,7 +34,7 @@ metadata.create_all(engine)
 conn = engine.connect()
 r1 = conn.execute(
     'select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket>=%s order by timeToMarket', START_DAY)
-# r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket=%s order by timeToMarket','2017-03-14' )
+
 res = r1.fetchall()
 df_n = pd.DataFrame()
 for x in res:
@@ -56,7 +56,7 @@ for x in res:
     df_o = df_o[df_o['_merge'] == 'left_only']
     df_o = df_o[df_o['p_change'] < 30.0]
     if (df_o.empty):
-        day_open = '2020-01-01'
+        day_open = '3020-01-01'
         f_0 = -999
         f_1 = -999
         f_2 = -999
@@ -81,12 +81,12 @@ for x in res:
         {"code": code, "timeToOpen": day_open, "days": days, "f_0": float(f_0),
          "f_1": float(f_1), "f_2": float(f_2)}, ignore_index=True)
 
-d = df_n.to_dict(orient='records')
-conn.execute(new_stock_open.insert(), d)
+# d = df_n.to_dict(orient='records')
+# conn.execute(new_stock_open.insert(), d)
 
 # df_n['f_0_new']=df_n['f_0'].map(transfer)
 # df_n['f_1_new']=df_n['f_1'].map(transfer)
 # df_n['f_2_new']=df_n['f_2'].map(transfer)
 
 
-# df_n.to_excel('d:/data/stock/new_stock.xlsx')
+df_n.to_excel('d:/data/stock/new_stock.xlsx')

@@ -8,47 +8,6 @@ from sqlalchemy import create_engine, Table, Column, MetaData, String, TIMESTAMP
 
 DAY_NEM = 5
 
-
-def get_data():
-    # 连接数据库
-    engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
-    metadata = MetaData()
-    # 定义表
-    p_change = Table('p_change', metadata,
-                     Column('date', TIMESTAMP, nullable=True),
-                     Column('volume', FLOAT, nullable=True),
-                     Column('p_change', FLOAT, nullable=True),
-                     Column('turnover', FLOAT, nullable=True),
-                     Column('code', String(10), nullable=True)
-                     )
-    # 初始化数据库
-    metadata.create_all(engine)
-    # 获取数据库连接
-    conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s', '2017-04-07')
-    res = r1.fetchall()
-    a_list=[]
-    for x in res:
-        code = x[0]
-        print(code)
-        df = ts.get_hist_data(code, start='2017-04-27')
-        df = df[['p_change', 'volume']]
-        df.reset_index(level=0, inplace=True)
-        df['code'] = code
-        df['turnover']=0
-        dict = df.to_dict(orient='records')
-        r = conn.execute(p_change.insert(), dict)
-
-
-    # df_all = pd.DataFrame(a_list)
-    # dict_2 = df_all.to_dict(orient='records')
-    # r = conn.execute(p_change.insert(), dict_2)
-
-def get_data_today():
-    df=ts.get_today_all()
-    df = df[['code', 'changepercent', 'volume', 'turnoverratio']]
-    dict = df.to_dict(orient='records')
-
 def analysis():
     engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
     conn = engine.connect()
@@ -107,8 +66,6 @@ def three_day_for_day(end_date, day_day):
 
 
 def n_day_analysis():
-    df_a = pd.DataFrame()
-
     engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
     metadata = MetaData()
     # 定义表
@@ -121,7 +78,7 @@ def n_day_analysis():
     # 初始化数据库
     metadata.create_all(engine)
     conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-03-27')
+    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-04-21')
     res1 = r1.fetchall()
     for x in res1:
         last = result = 0
@@ -130,10 +87,10 @@ def n_day_analysis():
         print(code)
         time_to_open=x[6]
         if time_to_open==None:
-            time_to_open='2017-01-01'
+            time_to_open='2017-05-02'
         else:
             time_to_open=time_to_open.strftime("%Y-%m-%d")
-        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-01-01','2017-04-26')
+        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-05-08','2017-05-16')
         res = r.fetchall()
         if not res:
             continue
@@ -156,8 +113,31 @@ def n_day_analysis():
     # d = df_a.to_dict(orient='records')
     # conn.execute("delete from max_change")
 
+def get_data_sh():
+    # 连接数据库
+    engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+    metadata = MetaData()
+    # 定义表
+    p_change = Table('p_change', metadata,
+                     Column('date', TIMESTAMP, nullable=True),
+                     Column('volume', FLOAT, nullable=True),
+                     Column('p_change', FLOAT, nullable=True),
+                     Column('turnover', FLOAT, nullable=True),
+                     Column('code', String(10), nullable=True)
+                     )
+    # 初始化数据库
+    metadata.create_all(engine)
+    # 获取数据库连接
+    conn = engine.connect()
+    df=ts.get_hist_data('sh',start='2017-05-09')
+    df = df[['p_change', 'volume']]
+    df.reset_index(level=0, inplace=True)
+    df['code'] = 'sh'
+    dict = df.to_dict(orient='records')
+    conn.execute(p_change.insert(), dict)
+
 
 
 if __name__ == '__main__':
-    get_data()
+
 
