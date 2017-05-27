@@ -4,6 +4,8 @@ import datetime
 
 start_date =datetime.date.today()
 start_date=start_date.strftime('%Y-%m-%d')
+start_date='2017-04-11'
+
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
@@ -18,20 +20,19 @@ p_change = Table('p_change', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket<%s', '2017-05-01')
+r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00 and code not in (select code from new_stock_open where timeToOpen>=%s)',start_date )
 res = r1.fetchall()
 for x in res:
     code = x[0]
     print(code)
-    df = ts.get_hist_data(code, start=start_date)
+    df = ts.get_hist_data(code, start=start_date,end=start_date)
     df = df[['p_change', 'volume']]
     df.reset_index(level=0, inplace=True)
     df['code'] = code
     dict = df.to_dict(orient='records')
-    print('')
-    #conn.execute(p_change.insert(), dict)
+    conn.execute(p_change.insert(), dict)
 
-df_sh = ts.get_hist_data('sh', start=start_date)
+df_sh = ts.get_hist_data('sh', start=start_date,end=start_date)
 df_sh = df_sh[['p_change', 'volume']]
 df_sh.reset_index(level=0, inplace=True)
 df_sh['code'] = 'sh'

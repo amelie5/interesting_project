@@ -1,6 +1,7 @@
 #coding: utf-8
 from datetime import datetime, timedelta
 import logging
+import tushare as ts
 from stock_analysis.spider_all import get_zs_tonghuashun,get_tx_minite
 
 logging.basicConfig(level=logging.INFO,
@@ -10,14 +11,12 @@ logging.basicConfig(level=logging.INFO,
                 filemode='a')
 
 def work():
-    list_all=[]
-    # df = get_zs_tonghuashun()
-    # logging.info(df)
-    # print(df)
-    list=get_tx_minite()
-    import itertools
-    it = itertools.groupby(list)
-    list_all=list_all+it
+    #get_tx_minite()
+    df=ts.get_today_all()
+    df=df[['code','name','changepercent','trade']]
+    df.sort_values(by='changepercent', ascending=False, inplace=True)
+    print(df.head(30))
+
 
 
 
@@ -47,5 +46,5 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Continue next iteration
           continue
 
-runTask(work, min=5/60)
+runTask(work, min=10/60)
 #runTask(work, day=1, hour=2, min=1)

@@ -1,3 +1,4 @@
+#统计涨幅
 select t.*,b.name,c.concept,b.timeToMarket from
 (select code,sum(p_change)s from p_change where date>='2017-04-06' and date<='2017-04-10'
 group by code)t

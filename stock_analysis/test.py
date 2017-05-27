@@ -85,8 +85,8 @@ code='300603'
 # print(a)
 
 
-# df = ts.get_h_data(code, start='2017-05-10')
-# print(df)
+df = ts.get_k_data('000005', start='1990-11-25',end='1990-12-10')
+print(df)
 # df.reset_index(level=0, inplace=True)
 # print(df)
 # print(df['date'])

@@ -18,13 +18,14 @@ top_ten = Table('comment', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-# conn.execute("delete from top_ten")
+conn.execute("delete from comment")
 
-s1 = 'select * from stock_basics'  # 查询全表
-r1 = conn.execute(s1)
+r1 = conn.execute('select * from stock_basics b inner JOIN new_stock_open n where b.code=n.code and n.timeToOpen<%s', '2020-01-01')
 res = r1.fetchall()
 for x in res:
     code = x[0]
+    if(code=='603033'):
+        continue
     print(code)
     df = get_comment(code)
     if (df.empty):

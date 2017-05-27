@@ -6,16 +6,16 @@ import pandas as pd
 import requests
 from pyquery import PyQuery as pq
 import tushare as ts
+import time
 
 
 def get_tx_minite():
-    url='http://push2.gtimg.cn/q=sz000078'
+    url='http://push2.gtimg.cn/q=sh603003'
     str = requests.get(url).text
     import re
     str = re.findall(r'(\d\d:\d\d:\d\d/.*)~2017', str)[0]
     str_arr=str.split('|')
-    print(type(str_arr))
-    return str_arr
+
     for str in str_arr[::-1]:
         print(str)
 
@@ -128,10 +128,12 @@ def get_comment_1():
 
 def get_comment(code):
     df = pd.DataFrame()
+
     flag=True
-    for page in range(83,10000000000):
+    for page in range(1,10000000000):
         if(flag):
             url='http://guba.eastmoney.com/list,{},f_{}.html'.format(code,page)
+
             html = requests.get(url).text
             p = pq(html).find('div.articleh')
             for d in p:
@@ -144,12 +146,14 @@ def get_comment(code):
                     df = df.append({'date': date}, ignore_index=True)
         else:
             break
-    grouped=df.groupby(df['date']).size().rename('counts')
-
+    grouped=df.groupby(df['date']).size()
+    df = pd.DataFrame(grouped.values,index=grouped.index,columns=['cnt'])
+    df.reset_index(level=0, inplace=True)
+    df['code']=code
     return  df
 
 
 if __name__ == '__main__':
-    get_comment('601003')
+    get_comment('603559')
 
 

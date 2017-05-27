@@ -78,7 +78,7 @@ def n_day_analysis():
     # 初始化数据库
     metadata.create_all(engine)
     conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-04-21')
+    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-05-03')
     res1 = r1.fetchall()
     for x in res1:
         last = result = 0
@@ -87,10 +87,10 @@ def n_day_analysis():
         print(code)
         time_to_open=x[6]
         if time_to_open==None:
-            time_to_open='2017-05-02'
+            time_to_open='2017-05-22'
         else:
             time_to_open=time_to_open.strftime("%Y-%m-%d")
-        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-05-08','2017-05-16')
+        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-05-22','2017-05-24')
         res = r.fetchall()
         if not res:
             continue
@@ -139,5 +139,4 @@ def get_data_sh():
 
 
 if __name__ == '__main__':
-
-
+    n_day_analysis()
