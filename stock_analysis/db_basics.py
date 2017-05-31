@@ -20,7 +20,7 @@ stock_basics = Table('stock_basics', metadata,
         Column('outstanding', FLOAT, nullable=True),
         Column('timeToMarket',DATE , nullable=True),
         Column('holders', Integer, nullable=True)
-    )
+    ) 
 #初始化数据库
 metadata.create_all(engine)
 # 获取数据库连接

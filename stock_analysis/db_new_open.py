@@ -31,15 +31,18 @@ new_stock_open = Table('new_stock_open', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-r_d = conn.execute(
-    'select timeToMarket from(select * from new_stock_open)t INNER JOIN stock_basics b on t.code=b.code where f_2=%s order by timeToMarket limit 1',
-    '-999')
-res_d = r_d.fetchall()
-start_date = res_d[0][0]
-start_date = start_date.strftime("%Y-%m-%d")
+# r_d = conn.execute(
+#     'select timeToMarket from(select * from new_stock_open)t INNER JOIN stock_basics b on t.code=b.code where f_2=%s order by timeToMarket limit 1',
+#     '-999')
+# res_d = r_d.fetchall()
+# start_date = res_d[0][0]
+# start_date = start_date.strftime("%Y-%m-%d")
+# conn.execute(
+#     'delete from new_stock_open where code in(select code from stock_basics where timeToMarket>=(select timeToMarket from (select * from new_stock_open)t INNER JOIN stock_basics b on t.code=b.code where f_2=%s order by timeToMarket limit 1))',
+#     '-999')
 conn.execute(
-    'delete from new_stock_open where code in(select code from stock_basics where timeToMarket>=(select timeToMarket from (select * from new_stock_open)t INNER JOIN stock_basics b on t.code=b.code where f_2=%s order by timeToMarket limit 1))',
-    '-999')
+    'delete from new_stock_open')
+start_date='2012-12-01'
 r1 = conn.execute(
     'select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket>=%s order by timeToMarket', start_date)
 
