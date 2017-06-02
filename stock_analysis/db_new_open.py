@@ -40,9 +40,8 @@ conn = engine.connect()
 # conn.execute(
 #     'delete from new_stock_open where code in(select code from stock_basics where timeToMarket>=(select timeToMarket from (select * from new_stock_open)t INNER JOIN stock_basics b on t.code=b.code where f_2=%s order by timeToMarket limit 1))',
 #     '-999')
-conn.execute(
-    'delete from new_stock_open')
-start_date='2012-12-01'
+conn.execute('delete from new_stock_open')
+start_date='2014-12-01'
 r1 = conn.execute(
     'select * from stock_basics where timeToMarket!=0000-00-00 and timeToMarket>=%s order by timeToMarket', start_date)
 

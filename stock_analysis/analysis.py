@@ -37,7 +37,7 @@ def max_drawdown(df):
     end_date=temp['date']
     df=df[df['date']<=end_date]
     start_date=df.sort_values(by='close',ascending=False).iloc[0]['date']
-    print('最大回车：%f,开始时间：%s,结束日期：%s'%(max_dd,start_date,end_date))
+    print('最大回撤：%f,开始时间：%s,结束日期：%s'%(max_dd,start_date,end_date))
 
 
 def beta(df):

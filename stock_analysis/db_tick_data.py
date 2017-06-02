@@ -30,7 +30,7 @@ r1 = conn.execute(
 res = r1.fetchall()
 for x in res:
     code = x[0]
-    df = ts.get_tick_data(code, date=date)
+    df = ts.get_tick_data(code, date=date,4,1)
     grouped = df.groupby(df['type']).sum()
     grouped.reset_index(level=0, inplace=True)
     grouped = grouped[['amount', 'type']]
