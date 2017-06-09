@@ -92,4 +92,5 @@ code='300603'
 # print(df['date'])
 
 
-print(-6%-3)
+df=ts.get_k_data('002167', start='2017-05-25')
+print(df)
