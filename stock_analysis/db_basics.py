@@ -6,7 +6,7 @@ from sqlalchemy import create_engine,Table,Column,MetaData,Integer,String,DATE,F
 
 df=ts.get_stock_basics()
 df.reset_index(level=0, inplace=True)
-df1=df[["code","name","outstanding","timeToMarket","holders"]]
+df1=df[["code","name","outstanding","timeToMarket","holders","pe","pb"]]
 d = df1.to_dict(orient='records')
 print("get basics already!")
 
@@ -19,7 +19,10 @@ stock_basics = Table('stock_basics', metadata,
         Column('name', String(50), nullable=False),
         Column('outstanding', FLOAT, nullable=True),
         Column('timeToMarket',DATE , nullable=True),
-        Column('holders', Integer, nullable=True)
+        Column('holders', Integer, nullable=True),
+Column('pe', FLOAT, nullable=True),
+Column('pb', FLOAT, nullable=True),
+Column('esp', FLOAT, nullable=True)
     ) 
 #初始化数据库
 metadata.create_all(engine)
