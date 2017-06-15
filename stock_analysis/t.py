@@ -92,5 +92,5 @@ code='300603'
 # print(df['date'])
 
 
-df=ts.get_k_data('002167', start='2017-05-25')
+df=ts.get_hist_data('603909', start='2017-05-25')
 print(df)

@@ -21,11 +21,11 @@ from p_change where date='2017-05-22' and code!='sh' )t
 group by 1)t1
 on t1.date=t2.date
 LEFT JOIN
-(select date,avg(p_change)as p_change from p_change where date='2017-05-22' and code!='sh')t3
+(select date,ROUND(avg(p_change),2) as p_change from p_change where date='2017-05-22' and code!='sh')t3
 on t3.date=t2.date
 LEFT JOIN
 (select date,sum(ROUND(volume,0))as volume from p_change where date='2017-05-22' and code!='sh')t4
 on t4.date=t2.date
 LEFT JOIN
-(select date,avg(ROUND(close,2))as price from price_amount where date='2017-05-22' and code!='sh')t5
+(select date,ROUND(avg(close),2) as price from price_amount where date='2017-05-22' and code!='sh')t5
 on t5.date=t2.date

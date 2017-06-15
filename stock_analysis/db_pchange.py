@@ -4,7 +4,7 @@ import datetime
 
 start_date = datetime.date.today()
 start_date = start_date.strftime('%Y-%m-%d')
-start_date = '2017-06-08'
+start_date = '2017-06-13'
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -21,7 +21,7 @@ metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
 
-r1 = conn.execute('select * from (select * from stock_basics where timeToMarket!=0000-00-00)t LEFT JOIN new_stock_open n on t.code=n.code where timeToOpen<=%s or timeToOpen is null',start_date)
+r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00')
 res = r1.fetchall()
 for x in res:
     code = x[0]
@@ -33,7 +33,6 @@ for x in res:
     df['code'] = code
     dict = df.to_dict(orient='records')
     conn.execute(p_change.insert(), dict)
-    flag = False
 
 df_sh = ts.get_hist_data('sh', start=start_date)
 df_sh = df_sh[['p_change', 'volume']]
@@ -41,3 +40,5 @@ df_sh.reset_index(level=0, inplace=True)
 df_sh['code'] = 'sh'
 dict_sh = df_sh.to_dict(orient='records')
 conn.execute(p_change.insert(), dict_sh)
+
+conn.execute('delete from p_change where code is null')

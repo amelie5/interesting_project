@@ -2,95 +2,60 @@ from datetime import timedelta
 
 import pandas as pd
 import tushare as ts
-from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, Integer
+from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, Integer, TIMESTAMP
 import datetime
 
 NOTIFY_DAY = 2
 start_date = datetime.date.today()
 start_date = start_date.strftime('%Y-%m-%d')
-start_date = '2017-06-08'
-
-
-def transfer(x):
-    y = float(x)
-    ntype = 'false'
-    if y >= 9.0:
-        ntype = 'true'
-    return ntype
-
+start_date = '2016-06-05'
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
 # 定义表
-new_stock_open = Table('zhang_stop', metadata,
-                       Column('code', String(10), nullable=False),
-                       Column('today', DATE, nullable=False),
-                       Column('second', Integer, nullable=False),
-                       Column('third', FLOAT, nullable=False)
-                       )
+zhang_stop = Table('zhang_stop', metadata,
+                   Column('code', String(10), nullable=True),
+                   Column('date', DATE, nullable=True),
+                   Column('change_0', FLOAT, nullable=True),
+                   Column('change_1', FLOAT, nullable=True),
+                   Column('change_2', FLOAT, nullable=True),
+                   Column('change_r', FLOAT, nullable=True)
+                   )
 # 初始化数据库
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-r1 = conn.execute(
-    'select * from (select * from stock_basics where timeToMarket!=0000-00-00)t LEFT JOIN new_stock_open n on t.code=n.code where timeToOpen<=%s or timeToOpen is null',
-    start_date)
-
+conn.execute("delete from zhang_stop")
+r1 = conn.execute("select * from stock_basics where timeToMarket!='0000-00-00'")
 res = r1.fetchall()
-df_n = pd.DataFrame()
+date = datetime.date.today()
+date = date.strftime('%Y-%m-%d')
+date='2017-06-15'
+
 for x in res:
     code = x[0]
     print(code)
-    name = x[1]
+    r1 = conn.execute(
+        'select t.date,t.code,p_change,close,high from (select * from price_amount where code=%s and date>=%s)t LEFT JOIN (select * from p_change where code=%s and date>=%s )n ' +
+        'on t.code=n.code and t.date=n.date order by t.date',
+        code, date, code, date)
 
-    df = ts.get_hist_data(code, start_date=start_date)
-    df1 = df[[ 'high', 'p_change']]
-    df1.reset_index(level=0, inplace=True)
-
-    df2 = df[['p_change']]
-    df2.reset_index(level=0, inplace=True)
-    df = df1.merge(df2, indicator=True, how='outer',on='date')
-
-    df.sort_values(by='date', inplace=True)
-
-    df_c = df[(df['low'] == df['close']) & (df['high'] == df['close']) & (df['p_change'] != 0.0)]
-    days = len(df_c)
-    df_o = df.merge(df_c, indicator=True, how='outer')
-    df_o = df_o[df_o['_merge'] == 'left_only']
-    df_o = df_o[df_o['p_change'] < 30.0]
-    if (df_o.empty):
-        day_open = '3020-01-01'
-        f_0 = -999
-        f_1 = -999
-        f_2 = -999
-    elif (len(df_o) == 1):
-        day_open = df_o.iloc[0, 0]
-        f_0 = df_o.iloc[0, 5]
-        f_1 = -999
-        f_2 = -999
-    elif (len(df_o) == 2):
-        day_open = df_o.iloc[0, 0]
-        f_0 = df_o.iloc[0, 5]
-        f_1 = df_o.iloc[1, 5]
-        f_2 = -999
+    res = r1.fetchall()
+    if (res):
+        df = pd.DataFrame(res)
+        df.columns = r1.keys()
+        df['change_0'] = df['p_change']
+        df['close_s'] = df['close'].shift(1)
+        df['change_1'] = df['p_change'].shift(-1)
+        df['change_2'] = df['p_change'].shift(-2)
+        df['change_r'] = round((df['high'] - df['close_s']) / df['close_s'] * 100, 2)
+        df=df.fillna(0)
+        df = df[df['change_r'] >= 9.9]
+        if (df.empty):
+            pass
+        else:
+            d = df.to_dict(orient='records')
+            conn.execute(zhang_stop.insert(), d)
     else:
-        day_open = df_o.iloc[0, 0]
-        f_0 = df_o.iloc[0, 5]
-        f_1 = df_o.iloc[1, 5]
-        f_2 = df_o.iloc[2, 5]
-
-    # df_n=df_n.append({"code":code,"name":name,"timetoMark":timetoMark,"timeToOpen":day_open,"days":days,"f_0":f_0,"f_1":f_1,"f_2":f_2},ignore_index=True)
-    df_n = df_n.append(
-        {"code": code, "timeToOpen": day_open, "days": days, "f_0": float(f_0),
-         "f_1": float(f_1), "f_2": float(f_2)}, ignore_index=True)
-
-d = df_n.to_dict(orient='records')
-conn.execute(new_stock_open.insert(), d)
-
-# df_n['f_0_new']=df_n['f_0'].map(transfer)
-# df_n['f_1_new']=df_n['f_1'].map(transfer)
-# df_n['f_2_new']=df_n['f_2'].map(transfer)
-
-
-# df_n.to_excel('d:/data/stock/new_stock.xlsx')
+        continue
