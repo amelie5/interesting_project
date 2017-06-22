@@ -1,10 +1,11 @@
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, String, TIMESTAMP, FLOAT
+from datetime import timedelta
 import datetime
 
 start_date = datetime.date.today()
 start_date = start_date.strftime('%Y-%m-%d')
-start_date = '2017-06-13'
+start_date='2017-06-19'
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -20,6 +21,13 @@ p_change = Table('p_change', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
+
+# r_d = conn.execute("select max(date) from p_change where code='000001'")
+# res_d = r_d.fetchall()
+# start_date = res_d[0][0]
+# start_date = start_date + timedelta(days=1)
+# start_date = start_date.strftime("%Y-%m-%d")
+conn.execute('delete from p_change where date>=%s ',start_date)
 
 r1 = conn.execute('select * from stock_basics where timeToMarket!=0000-00-00')
 res = r1.fetchall()

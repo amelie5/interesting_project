@@ -78,19 +78,20 @@ def n_day_analysis():
     # 初始化数据库
     metadata.create_all(engine)
     conn = engine.connect()
-    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-05-20')
+    conn.execute("delete from max_change where start>='2017-06-01'")
+    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-05-29')
     res1 = r1.fetchall()
     for x in res1:
         last = result = 0
         start = end = ''
         code = x[0]
         print(code)
-        time_to_open=x[6]
+        time_to_open=x[8]
         if time_to_open==None:
-            time_to_open='2017-06-05'
+            time_to_open='2017-06-12'
         else:
             time_to_open=time_to_open.strftime("%Y-%m-%d")
-        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-06-05','2017-06-12')
+        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-06-12','2017-06-16')
         res = r.fetchall()
         if not res:
             continue

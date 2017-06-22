@@ -2,29 +2,30 @@
 
 __author__ = 'amelie'
 import tushare as ts
-from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, Date
+from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, TIMESTAMP
 
+start_date='2017-06-15'
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
 # 定义表
 market = Table('market', metadata,
-               Column('date', Date, nullable=False),
-               Column('total_num', Integer, nullable=False),
-               Column('zhangting_num', Integer, nullable=False),
-               Column('dieting_num', Integer, nullable=False),
-               Column('zhang_num', Integer, nullable=False),
-               Column('die_num', Integer, nullable=False),
-               Column('volume', Integer, nullable=False),
-               Column('p_change', FLOAT, nullable=False),
-               Column('price', FLOAT, nullable=False)
+               Column('date',TIMESTAMP , nullable=True),
+               Column('total_num', Integer, nullable=True),
+               Column('zhangting_num', Integer, nullable=True),
+               Column('dieting_num', Integer, nullable=True),
+               Column('zhang_num', Integer, nullable=True),
+               Column('die_num', Integer, nullable=True),
+               Column('volume', Integer, nullable=True),
+               Column('p_change', FLOAT, nullable=True),
+               Column('price', FLOAT, nullable=True)
                )
 # 初始化数据库
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
 #conn.execute("delete from market")
-r1 = conn.execute("select date from p_change where code='sh' and date>='2015-01-01' order by date")
+r1 = conn.execute('select date from p_change where code=%s and date>=%s order by date','sh',start_date)
 res = r1.fetchall()
 for x in res:
     date = x[0]

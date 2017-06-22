@@ -92,5 +92,8 @@ code='300603'
 # print(df['date'])
 
 
-df=ts.get_hist_data('603909', start='2017-05-25')
+#df=ts.get_k_data('000001', start='2017-06-15')
+#df=ts.trade_cal()
+# df=ts.is_holiday('2017-06-18')
+df=ts.get_today_all()
 print(df)

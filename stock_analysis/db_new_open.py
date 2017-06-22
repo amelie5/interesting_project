@@ -20,11 +20,11 @@ engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8
 metadata = MetaData()
 # 定义表
 new_stock_open = Table('new_stock_open', metadata,
-                       Column('code', String(10), nullable=False),
-                       Column('timeToOpen', DATE, nullable=False),
-                       Column('days', Integer, nullable=False),
-                       Column('f_0', FLOAT, nullable=False),
-                       Column('f_1', FLOAT, nullable=False),
+                       Column('code', String(10), nullable=True),
+                       Column('timeToOpen', DATE, nullable=True),
+                       Column('days', Integer, nullable=True),
+                       Column('f_0', FLOAT, nullable=True),
+                       Column('f_1', FLOAT, nullable=True),
                        Column('f_2', FLOAT, nullable=True)
                        )
 # 初始化数据库

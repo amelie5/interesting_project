@@ -17,17 +17,21 @@ p_change = Table('p_change_2', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
+conn.execute("truncate table p_change_2")
 
-df = ts.get_hist_data('000672', start='2016-01-01')
+df = ts.get_hist_data('002809', start='2016-06-01')
 df = df[[ 'p_change','volume']]
 df['rate']=df['volume'].pct_change()
 df=df.fillna(0)
-df=df[[ 'p_change','rate']]
-df.plot()
-plt.show()
+df.reset_index(level=0, inplace=True)
+
+# df.sort_values(by='date', inplace=True)
+# df=df[[ 'rate']]
+# df.plot()
+# plt.show()
 
 
-# dict = df.to_dict(orient='records')
-# conn.execute(p_change.insert(), dict)
+dict = df.to_dict(orient='records')
+conn.execute(p_change.insert(), dict)
 
 
