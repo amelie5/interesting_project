@@ -3,8 +3,7 @@
 __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE
-from datetime import timedelta
-import time
+from datetime import timedelta,datetime
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -31,7 +30,7 @@ start_date = start_date + timedelta(days=1)
 start_date = start_date.strftime("%Y-%m-%d")
 
 while ts.is_holiday(start_date):
-    start_date = time.strptime(start_date, "%Y-%m-%d")
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
     start_date = start_date + timedelta(days=1)
     start_date = start_date.strftime("%Y-%m-%d")
 
@@ -49,7 +48,7 @@ for x in res:
     timeToOpen = x[8]
     if timeToOpen != None:
         timeToOpen = timeToOpen.strftime('%Y-%m-%d')
-        conn.execute('delete from price_amount where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-06-20')
+        conn.execute('delete from price_amount where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-01-01')
 
 df = ts.get_hist_data('sh', start=start_date)
 df.reset_index(level=0, inplace=True)

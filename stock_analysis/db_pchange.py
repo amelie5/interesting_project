@@ -1,7 +1,6 @@
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, String, TIMESTAMP, FLOAT
-from datetime import timedelta
-import time
+from datetime import timedelta,datetime
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -25,7 +24,7 @@ start_date = start_date + timedelta(days=1)
 start_date = start_date.strftime("%Y-%m-%d")
 
 while ts.is_holiday(start_date):
-    start_date=time.strptime(start_date, "%Y-%m-%d")
+    start_date=datetime.strptime(start_date, "%Y-%m-%d")
     start_date = start_date + timedelta(days=1)
     start_date = start_date.strftime("%Y-%m-%d")
 
