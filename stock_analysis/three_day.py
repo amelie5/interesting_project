@@ -70,28 +70,24 @@ def n_day_analysis():
     metadata = MetaData()
     # 定义表
     max_change = Table('max_change', metadata,
-                    Column('code', String(10), nullable=False),
-                    Column('max_change', FLOAT, nullable=False),
-                    Column('start', DATE, nullable=False),
-                    Column('end', DATE, nullable=False)
+                    Column('code', String(10), nullable=True),
+                    Column('max_change', FLOAT, nullable=True),
+                    Column('start', DATE, nullable=True),
+                    Column('end', DATE, nullable=True),
+                    Column('ntype', DATE, nullable=True)
                     )
     # 初始化数据库
     metadata.create_all(engine)
     conn = engine.connect()
-    conn.execute("delete from max_change where start>='2017-06-01'")
-    r1 = conn.execute('select * from stock_basics b left JOIN new_stock_open n on b.code=n.code where  b.timeToMarket!=0000-00-00 and b.timeToMarket<%s', '2017-05-29')
+    # conn.execute("delete from max_change")
+    r1 = conn.execute('select * from stock_basics')
     res1 = r1.fetchall()
     for x in res1:
         last = result = 0
         start = end = ''
         code = x[0]
         print(code)
-        time_to_open=x[8]
-        if time_to_open==None:
-            time_to_open='2017-06-12'
-        else:
-            time_to_open=time_to_open.strftime("%Y-%m-%d")
-        r = conn.execute('select * from p_change where code=%s and date>=%s and date>=%s and date<=%s order by date',code,time_to_open, '2017-06-12','2017-06-16')
+        r = conn.execute('select * from p_change where code=%s and date>=%s and date<=%s order by date',code, '2016-10-01','2016-10-15')
         res = r.fetchall()
         if not res:
             continue
@@ -107,9 +103,10 @@ def n_day_analysis():
                 new_start=j[0].strftime("%Y-%m-%d")
         if start=='':
             end=start=new_start
-        d = {'start': start,'end':end, 'max_change': result, 'code': code}
+        d = {'start': start,'end':end, 'max_change': result, 'code': code,'ntype':'H_M'}
         conn.execute(max_change.insert(), d)
 
+    conn.execute("delete from max_change where code is null")
 
     # d = df_a.to_dict(orient='records')
     # conn.execute("delete from max_change")

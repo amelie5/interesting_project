@@ -3,7 +3,8 @@
 __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, Date
-import datetime
+from datetime import timedelta
+import time
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -22,10 +23,19 @@ ban = Table('ban', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-#conn.execute("delete from ban")
-date = datetime.date.today()
-date = date.strftime('%Y-%m-%d')
-date='2017-06-15'
+
+r_d = conn.execute("select max(date) from ban")
+res_d = r_d.fetchall()
+date = res_d[0][0]
+date = date + timedelta(days=1)
+date = date.strftime("%Y-%m-%d")
+
+while ts.is_holiday(date):
+    date = time.strptime(date, "%Y-%m-%d")
+    date = date + timedelta(days=1)
+    date = date.strftime("%Y-%m-%d")
+
+conn.execute('delete from ban where date>=%s',date)
 
 sql = "insert into ban \n" \
       "select date,zhang_num,zhang_feng_num ,round(zhang_daban,2),open_num,open_feng_num,round(open_daban,2) from \n" \

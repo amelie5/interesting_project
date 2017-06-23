@@ -95,5 +95,5 @@ code='300603'
 #df=ts.get_k_data('000001', start='2017-06-15')
 #df=ts.trade_cal()
 # df=ts.is_holiday('2017-06-18')
-df=ts.get_today_all()
+df = ts.get_k_data('000001', start='2017-06-23')
 print(df)

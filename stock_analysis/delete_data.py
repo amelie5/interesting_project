@@ -15,4 +15,4 @@ for x in res:
     print(code)
     date=x[1]
     date = date.strftime('%Y-%m-%d')
-    conn.execute('delete from price_amount where code=%s and date<%s and date>=%s',code,date,'2017-06-14')
+    conn.execute('delete from price_amount where code=%s and date<%s and date>=%s',code,date,'2017-06-20')

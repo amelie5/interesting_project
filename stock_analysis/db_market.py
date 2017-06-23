@@ -3,8 +3,8 @@
 __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, TIMESTAMP
+from datetime import timedelta
 
-start_date='2017-06-15'
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
@@ -24,8 +24,19 @@ market = Table('market', metadata,
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-#conn.execute("delete from market")
-r1 = conn.execute('select date from p_change where code=%s and date>=%s order by date','sh',start_date)
+
+r_d = conn.execute("select max(date) from market")
+res_d = r_d.fetchall()
+start_date = res_d[0][0]
+start_date = start_date + timedelta(days=1)
+start_date = start_date.strftime("%Y-%m-%d")
+
+while ts.is_holiday(start_date):
+    start_date = start_date + timedelta(days=1)
+    start_date = start_date.strftime("%Y-%m-%d")
+
+conn.execute('delete from market where date>=%s',start_date)
+r1 = conn.execute('select date from p_change where code=%s and date>=%s order by date','000001',start_date)
 res = r1.fetchall()
 for x in res:
     date = x[0]

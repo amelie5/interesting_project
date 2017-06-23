@@ -37,10 +37,12 @@ def work():
 def work_all():
     df=ts.get_today_all()
     df=df[['changepercent','trade','volume']]
-    logging.info(df.describe())
+    #logging.info(df.describe())
+    print(df.describe())
     df['c'] = df.apply(lambda x: transfer(x['changepercent']), axis=1)
     cnt = df.groupby(df['c']).size().rename('counts')
-    logging.info(cnt)
+    #logging.info(cnt)
+    print(cnt)
 
 
 
@@ -68,5 +70,5 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Continue next iteration
           continue
 
-runTask(work_all, min=60/60)
+runTask(work_all, min=3)
 #runTask(work, day=1, hour=2, min=1)
