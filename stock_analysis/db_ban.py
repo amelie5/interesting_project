@@ -3,8 +3,7 @@
 __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, Date
-from datetime import timedelta
-import time
+from datetime import timedelta,datetime
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -27,11 +26,12 @@ conn = engine.connect()
 r_d = conn.execute("select max(date) from ban")
 res_d = r_d.fetchall()
 date = res_d[0][0]
+
 date = date + timedelta(days=1)
 date = date.strftime("%Y-%m-%d")
 
 while ts.is_holiday(date):
-    date = time.strptime(date, "%Y-%m-%d")
+    date = datetime.strptime(date, "%Y-%m-%d")
     date = date + timedelta(days=1)
     date = date.strftime("%Y-%m-%d")
 

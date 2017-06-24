@@ -3,7 +3,7 @@
 __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, TIMESTAMP
-from datetime import timedelta
+from datetime import timedelta,datetime
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -32,6 +32,7 @@ start_date = start_date + timedelta(days=1)
 start_date = start_date.strftime("%Y-%m-%d")
 
 while ts.is_holiday(start_date):
+    start_date = datetime.strptime(start_date, "%Y-%m-%d")
     start_date = start_date + timedelta(days=1)
     start_date = start_date.strftime("%Y-%m-%d")
 
