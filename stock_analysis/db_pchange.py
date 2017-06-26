@@ -44,7 +44,7 @@ for x in res:
     timeToOpen=x[8]
     if timeToOpen!=None:
         timeToOpen = timeToOpen.strftime('%Y-%m-%d')
-        conn.execute('delete from p_change where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-06-11')
+        conn.execute('delete from p_change where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-06-21')
 
 df_sh = ts.get_hist_data('sh', start=start_date)
 df_sh = df_sh[['p_change', 'volume']]

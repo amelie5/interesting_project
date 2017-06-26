@@ -95,5 +95,29 @@ code='300603'
 #df=ts.get_k_data('000001', start='2017-06-15')
 #df=ts.trade_cal()
 # df=ts.is_holiday('2017-06-18')
-df = ts.get_k_data('000001', start='2017-06-23')
-print(df)
+from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE
+from datetime import timedelta,datetime
+
+# 连接数据库
+engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+metadata = MetaData()
+# 定义表
+top_ten = Table('price_amount', metadata,
+                Column('code', String(10), nullable=True),
+                Column('open', FLOAT, nullable=True),
+                Column('close', FLOAT, nullable=True),
+                Column('high', FLOAT, nullable=True),
+                Column('low', FLOAT, nullable=True),
+                Column('volume', FLOAT, nullable=True),
+                Column('date', DATE, nullable=True)
+                )
+# 初始化数据库
+metadata.create_all(engine)
+# 获取数据库连接
+conn = engine.connect()
+df = ts.get_hist_data('sh', start='2017-06-26')
+df=df[['open','close','high','low','volume']]
+df['code'] ='sh'
+df.reset_index(level=0, inplace=True)
+d = df.to_dict(orient='records')
+conn.execute(top_ten.insert(), d)

@@ -42,15 +42,19 @@ for x in res:
     code = x[0]
     print(code)
     df = ts.get_hist_data(code, start=start_date)
+    df=df[['open','close','high','low','volume']]
+    df['code']=code
     df.reset_index(level=0, inplace=True)
     d = df.to_dict(orient='records')
     conn.execute(top_ten.insert(), d)
     timeToOpen = x[8]
     if timeToOpen != None:
         timeToOpen = timeToOpen.strftime('%Y-%m-%d')
-        conn.execute('delete from price_amount where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-01-01')
+        conn.execute('delete from price_amount where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-06-21')
 
 df = ts.get_hist_data('sh', start=start_date)
+df=df[['open','close','high','low','volume']]
+df['code'] ='sh'
 df.reset_index(level=0, inplace=True)
 d = df.to_dict(orient='records')
 conn.execute(top_ten.insert(), d)
