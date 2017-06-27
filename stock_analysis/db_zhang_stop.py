@@ -32,19 +32,19 @@ conn.execute('delete from zhang_stop where date>=%s',date)
 start_date = start_date.strftime("%Y-%m-%d")
 
 r1 = conn.execute("select * from stock_basics where timeToMarket!='0000-00-00'")
-res = r1.fetchall()
-for x in res:
+res1 = r1.fetchall()
+for x in res1:
     code = x[0]
     print(code)
-    r1 = conn.execute(
+    r = conn.execute(
         'select t.date,t.code,p_change,close,high from (select * from price_amount where code=%s and date>=%s)t LEFT JOIN (select * from p_change where code=%s and date>=%s )n ' +
         'on t.code=n.code and t.date=n.date order by t.date',
         code, start_date, code, start_date)
 
-    res = r1.fetchall()
+    res = r.fetchall()
     if (res):
         df = pd.DataFrame(res)
-        df.columns = r1.keys()
+        df.columns = r.keys()
         df['change_0'] = df['p_change']
         df['close_s'] = df['close'].shift(1)
         df['change_1'] = df['p_change'].shift(-1)
