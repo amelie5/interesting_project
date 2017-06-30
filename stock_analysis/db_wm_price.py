@@ -22,7 +22,7 @@ metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
 
-r_d = conn.execute('select max(date) from price_amount where code=%s', 'sh')
+r_d = conn.execute('select max(date) from wm_price where code=%s', '000001')
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
 start_date = start_date + timedelta(days=1)
@@ -33,23 +33,30 @@ while ts.is_holiday(start_date):
     start_date = start_date + timedelta(days=1)
     start_date = start_date.strftime("%Y-%m-%d")
 
+
 conn.execute("delete from wm_price where date>=%s", start_date)
 
-r_d = conn.execute('select date from price_amount where code=%s and date<=%s group by date order by date desc limit 22', 'sh',start_date)
-res_d = r_d.fetchall()
-end_date = res_d[21][0]
-end_date = end_date.strftime("%Y-%m-%d")
-r = conn.execute(
-    'select code,avg(close)as close,count(1)as cnt from price_amount where code!=%s and date>=%s and date<=%s group by code',
-    'sh',
-    end_date, start_date)
-res = r.fetchall()
-df = pd.DataFrame(res)
-df.columns = r.keys()
-df['date'] = start_date
-df['ntype'] = 'm'
+r_date = conn.execute('select date from price_amount where code=%s and date>=%s group by date order by date ', 'sh',start_date)
+res_date = r_date.fetchall()
+for x in res_date:
+    date = x[0]
+    date = date.strftime("%Y-%m-%d")
 
-d = df.to_dict(orient='records')
-conn.execute(wm_price.insert(), d)
+    r_d = conn.execute('select date from price_amount where code=%s and date<=%s group by date order by date desc limit 22', 'sh',date)
+    res_d = r_d.fetchall()
+    end_date = res_d[21][0]
+    end_date = end_date.strftime("%Y-%m-%d")
+    r = conn.execute(
+        'select code,avg(close)as close,count(1)as cnt from price_amount where code!=%s and date>=%s and date<=%s group by code',
+        'sh',
+        end_date, date)
+    res = r.fetchall()
+    df = pd.DataFrame(res)
+    df.columns = r.keys()
+    df['date'] = date
+    df['ntype'] = 'm'
+
+    d = df.to_dict(orient='records')
+    conn.execute(wm_price.insert(), d)
 
 conn.execute("delete from wm_price where code is null")

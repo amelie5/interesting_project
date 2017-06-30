@@ -16,7 +16,7 @@ ban = Table('ban', metadata,
             Column('zhang_daban', FLOAT, nullable=True),
             Column('open_num', Integer, nullable=True),
             Column('open_feng_num', Integer, nullable=True),
-            Column('opne_daban', FLOAT, nullable=True)
+            Column('open_daban', FLOAT, nullable=True)
             )
 # 初始化数据库
 metadata.create_all(engine)
