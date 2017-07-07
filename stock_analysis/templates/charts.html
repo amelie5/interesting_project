@@ -31,10 +31,7 @@ function splitData(rawData) {
   return {
       datas: datas,
       times: times,
-      vols: vols,
-      macds: macds,
-      difs: difs,
-      deas: deas
+      vols: vols
   };
 }
 
@@ -96,7 +93,7 @@ function calculateMA(dayCount) {
         // 指定图表的配置项和数据
         var option = {
   title: {
-      text: 'K线周期图表(matols.com)',
+      text: 'K线周期图表',
       left: 0
   },
   tooltip: {
@@ -184,7 +181,7 @@ function calculateMA(dayCount) {
       end: 100
   }],
   series: [{
-          name: 'K线周期图表(matols.com)',
+          name: 'K线周期图表',
           type: 'candlestick',
           data: data.datas,
           itemStyle: {
@@ -269,19 +266,8 @@ function calculateMA(dayCount) {
 		          },
 		      }
 	      }
-      },{
-          name: 'DIF',
-          type: 'line',
-          xAxisIndex: 2,
-          yAxisIndex: 2,
-          data: data.difs
-      },{
-          name: 'DEA',
-          type: 'line',
-          xAxisIndex: 2,
-          yAxisIndex: 2,
-          data: data.deas
       }
+
   ]
 };
 

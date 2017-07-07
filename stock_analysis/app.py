@@ -1,24 +1,24 @@
 from flask import Flask, render_template, jsonify
 import tushare as ts
 from mysql import *
-from spider_all import get_zs
+from flask_socketio import SocketIO, emit
+import json
 
-# from form import MyForm
+
+
 
 
 def transfer(x):
     ntype = ''
-    if x >= 9.0:
-        ntype = '10'
+    if x >= 9.9:
+        ntype = 'zhangting!!!!'
     elif x >= 5:
         ntype = '5-10'
-    elif x >= 1:
-        ntype = '1-5'
-    elif x >= -1:
-        ntype = '-1-1'
+    elif x >= 0:
+        ntype = '0-5'
     elif x >= -5:
-        ntype = '-5- -1'
-    elif x > -9.0:
+        ntype = '-5- 0'
+    elif x > -9.9:
         ntype = '-10- -5'
     else:
         ntype = '-10'
@@ -28,13 +28,12 @@ def transfer(x):
 app = Flask(__name__)
 app.debug = True
 app.config['SECRET_KEY']='bendawang'
+socketio = SocketIO(app)
 
 
 @app.route('/')
 def index():
-    labels = ["January", "February", "March", "April", "May", "June", "July", "August"]
-    values = [10, 9, 8, 7, 6, 4, 7, 8]
-    return render_template('index.html', values=values, labels=labels)
+    return render_template('index.html')
 
 
 @app.route('/zs_table')
@@ -43,14 +42,14 @@ def zs_table():
     return render_template('zs_table.html', values=df)
 
 
-@app.route('/c')
-def c():
-    df = ts.get_tick_data('600848', date='2017-02-17').sort(columns='time')
+@app.route('/c/<code>/<date>')
+def c(code=None,date=None):
+    df = ts.get_tick_data(code, date=date).sort(columns='time')
     list_time=df['time'].values.tolist()
     list_price=df['price'].values.tolist()
     start_price=df['price'].head(1).values
     #list_price = df.apply(lambda x: x['changepercent']-start_price, axis=1).values.tolist()
-    return render_template('c.html',code='600848',date='2017-02-17',start_price=start_price,list_time=list_time,list_price=list_price)
+    return render_template('c.html',code=code,date=date,start_price=start_price,list_time=list_time,list_price=list_price)
 
 
 # @app.route('/form', methods=['GET', 'POST'])
@@ -72,11 +71,27 @@ def e2():
 @app.route('/e1')
 def e1():
     df = ts.get_today_all()
+    df = df[['changepercent', 'trade', 'volume']]
+    str=df.describe().to_string()
     df['c'] = df.apply(lambda x: transfer(x['changepercent']), axis=1)
-    cnt = df.groupby(df['c']).size().rename('counts')
+    cnt = df.groupby(df['c']).size().astype(float)
     labels = list(cnt.index)
     values = list(cnt)
-    return render_template('e1.html', values=values, labels=labels)
+    j = {'labels': labels, 'values': values,'str':str}
+    return render_template('e1.html',j=j)
+
+@socketio.on('e1_event')
+def client_msg(msg):
+    print('hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh')
+    df = ts.get_today_all()
+    df = df[['changepercent', 'trade', 'volume']]
+    str = df.describe().to_string()
+    df['c'] = df.apply(lambda x: transfer(x['changepercent']), axis=1)
+    cnt = df.groupby(df['c']).size().astype(float)
+    labels = list(cnt.index)
+    values = list(cnt)
+    j = {'labels': labels, 'values': values,'str':str}
+    emit('e1_response',j)
 
 
 @app.route('/code/<code>')

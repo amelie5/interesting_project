@@ -6,10 +6,28 @@
     <!-- 引入 echarts.js -->
     <script src="{{ url_for('static', filename='echarts.js') }}"></script>
     <script src="{{ url_for('static', filename='jquery-3.1.1.min.js') }}"></script>
+     <script type="text/javascript" src="//cdn.bootcss.com/socket.io/1.5.1/socket.io.min.js"></script>
+    <script type="text/javascript" charset="utf-8">
+             $(document).ready(function() {
+        var socket = io.connect();
+
+
+    socket.on('e1_response', function(msg) {
+    console.log(msg);
+    $('#log').html('<br>' + $('<div/>').text(msg.str).html());
+    });
+
+    setInterval(function clock(){
+        socket.emit('e1_event', {data:'0'});
+        },20000);
+    });
+
+    </script>
 </head>
 <body>
 <!-- 为ECharts准备一个具备大小（宽高）的Dom -->
-<div id="main" style="width: 900px;height:600px;"></div>
+<div id="main" style="width: 800px;height:400px;"></div>
+<div id='log'>{{j.str}}</div>
 <script type="text/javascript">
     // 基于准备好的dom，初始化echarts实例
     var data = [];
@@ -18,7 +36,7 @@
     function setOption(data, type) {
         option = {
             title: {
-                text: '涨幅统计',
+                text: '实时统计',
             },
             tooltip: {
                 trigger: 'axis'
@@ -42,9 +60,15 @@
                 {
                     name: '个数',
                     type: 'bar',
-                    data: data
+                    data: data,
+                    label:{
+normal:{
+show: true,
+position: 'top'}
+}
                 }
             ]
+
         };
         // 使用刚指定的配置项和数据显示图表。
         myChart.setOption(option);
@@ -69,9 +93,11 @@
     }
 
     //获取...排行数据
-    function getData2(values, labels) {
+    function getData2(json) {
+    console.log("getdata"+json);
         myChart.showLoading();
-        console.log(labels);
+        values=json.values
+        labels=json.labels
         for (var i = 0; i < values.length; i++) {
             var oneData = values[i];
             data.push(oneData);
@@ -82,10 +108,8 @@
 
     }
 
-    getData2({{values}},{{labels|tojson}});
-
-
-
+    getData2({{j|tojson}});
 </script>
+
 </body>
 </html>
