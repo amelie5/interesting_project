@@ -1,14 +1,18 @@
 #coding: utf-8
 import logging
 from datetime import datetime, timedelta
-
+from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, TIMESTAMP
 import tushare as ts
+import pandas as pd
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
                 datefmt='%a, %d %b %Y %H:%M:%S',
                 filename='zs.log',
                 filemode='a')
+
+
+
 
 def transfer(x):
     ntype=''
@@ -35,14 +39,30 @@ def work():
 
 
 def work_all():
+    # 连接数据库
+    engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+    # 获取数据库连接
+    conn = engine.connect()
+    r = conn.execute("select code from new_stock_open where timeToOpen='3020-01-01'")
+    res = r.fetchall()
+    df_no = pd.DataFrame(res)
+    df_no.columns = r.keys()
+
     df=ts.get_today_all()
+    df_2 = df[['code', 'name', 'changepercent']]
     df=df[['changepercent','trade','volume']]
-    #logging.info(df.describe())
     print(df.describe())
     df['c'] = df.apply(lambda x: transfer(x['changepercent']), axis=1)
-    cnt = df.groupby(df['c']).size().rename('counts')
+    cnt = df.groupby(df['c']).size()
     #logging.info(cnt)
     print(cnt)
+
+    df_2.sort_values(by='changepercent', inplace=True, ascending=False)
+    df_2=df_2[df_2['changepercent']<=11]
+    df_o = df_2.merge(df_no, indicator=True, how='outer',on=['code'])
+    df_o = df_o[df_o['_merge'] == 'left_only']
+    print(df_o.head(40))
+
 
 
 
@@ -61,7 +81,7 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Get every start work time
           #print ("start work: %s" % iter_now_time)
           # Call task func
-          func()
+          func
 
           # Get next iteration time
           iter_time = iter_now + period
@@ -70,5 +90,5 @@ def runTask(func, day=0, hour=0, min=0, second=0):
           # Continue next iteration
           continue
 
-runTask(work_all, min=3)
+runTask(work_all, min=2)
 #runTask(work, day=1, hour=2, min=1)
