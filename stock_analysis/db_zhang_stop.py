@@ -15,21 +15,26 @@ zhang_stop = Table('zhang_stop', metadata,
                    Column('change_0', FLOAT, nullable=True),
                    Column('change_1', FLOAT, nullable=True),
                    Column('change_2', FLOAT, nullable=True),
-                   Column('change_r', FLOAT, nullable=True)
+                   Column('yizi', FLOAT, nullable=True)
                    )
 # 初始化数据库
 metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
-r_d=conn.execute('select max(date) from zhang_stop')
+r_d=conn.execute('select max(date) from zhang_stop ')
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
 
-date = start_date + timedelta(days=1)
+date = start_date - timedelta(days=1)
 date = date.strftime("%Y-%m-%d")
-conn.execute('delete from zhang_stop where date>=%s',date)
-
+while ts.is_holiday(date):
+    date = datetime.strptime(date, "%Y-%m-%d")
+    date = date - timedelta(days=1)
+    date = date.strftime("%Y-%m-%d")
 start_date = start_date.strftime("%Y-%m-%d")
+
+conn.execute('delete from zhang_stop where date>=%s',start_date)
+
 
 r1 = conn.execute("select * from stock_basics where timeToMarket!='0000-00-00'")
 res1 = r1.fetchall()
@@ -37,9 +42,9 @@ for x in res1:
     code = x[0]
     print(code)
     r = conn.execute(
-        'select t.date,t.code,p_change,close,high from (select * from price_amount where code=%s and date>=%s)t LEFT JOIN (select * from p_change where code=%s and date>=%s )n ' +
+        'select t.date,t.code,p_change,close,high,low from (select * from price_amount where code=%s and date>=%s)t LEFT JOIN (select * from p_change where code=%s and date>=%s )n ' +
         'on t.code=n.code and t.date=n.date order by t.date',
-        code, start_date, code, start_date)
+        code, date, code, date)
 
     res = r.fetchall()
     if (res):
@@ -50,9 +55,10 @@ for x in res1:
         df['change_1'] = df['p_change'].shift(-1)
         df['change_2'] = df['p_change'].shift(-2)
         df['change_r'] = round((df['high'] - df['close_s']) / df['close_s'] * 100, 2)
+        df['yizi']=round((df['high']-df['low'])/df['low'],2)
 
         df=df.drop(0)
-        df=df.fillna(0)
+        df=df.fillna(999)
         df = df[df['change_r'] >= 9.9]
         if (df.empty):
             pass
