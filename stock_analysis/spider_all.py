@@ -83,6 +83,24 @@ def get_concept(list):
 
     return df
 
+def get_industry(list):
+    df = pd.DataFrame()
+    for tup in list:
+        for i in range(1,100):
+            url = 'http://q.10jqka.com.cn/thshy/detail/field/199112/order/desc/page/{}/ajax/1/code/{}'.format(str(i),tup[1])
+            html = requests.get(url).text
+            p = pq(html).find('table.m-table>tbody>tr')
+            if "暂无成份股数据" in p.html():
+                break
+            else:
+                for d in p:
+                    code = pq(d).find('td').eq(1).text()
+                    industry=tup[0]
+                    print(industry)
+                    df = df.append({"code": code, "industry": industry },ignore_index=True)
+
+    return df
+
 def get_concept_name():
     list=[]
     url = 'http://q.10jqka.com.cn/gn/detail/code/300061/'
@@ -93,6 +111,19 @@ def get_concept_name():
         url=pq(d).attr('href')
         code = re.compile(r'code\/(.*)\/').findall(url)[0]
         tup=(concept,code)
+        list.append(tup)
+    return list
+
+def get_industry_name():
+    list=[]
+    url = 'http://q.10jqka.com.cn/thshy/'
+    html = requests.get(url).text
+    p = pq(html).find('div.cate_items>a')
+    for d in p:
+        industry = pq(d).text()
+        url=pq(d).attr('href')
+        code = re.compile(r'code\/(.*)\/').findall(url)[0]
+        tup=(industry,code)
         list.append(tup)
     return list
 
