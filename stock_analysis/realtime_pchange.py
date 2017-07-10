@@ -1,9 +1,10 @@
 #coding: utf-8
 import logging
 from datetime import datetime, timedelta
-from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, Integer, TIMESTAMP
-import tushare as ts
+
 import pandas as pd
+import tushare as ts
+from sqlalchemy import create_engine
 
 logging.basicConfig(level=logging.INFO,
                 format='%(asctime)s %(filename)s[line:%(lineno)d] %(levelname)s %(message)s',
