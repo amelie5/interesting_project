@@ -1,9 +1,9 @@
-from datetime import timedelta
+from datetime import timedelta,datetime
 
 import pandas as pd
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, Integer, TIMESTAMP
-import datetime
+
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -31,7 +31,7 @@ while ts.is_holiday(date):
     date = datetime.strptime(date, "%Y-%m-%d")
     date = date - timedelta(days=1)
     date = date.strftime("%Y-%m-%d")
-start_date = start_date.strftime("%Y-%m-%d")
+
 
 conn.execute('delete from zhang_stop where date>=%s',start_date)
 
