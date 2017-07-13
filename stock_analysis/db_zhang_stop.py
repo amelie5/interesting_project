@@ -58,7 +58,7 @@ for x in res1:
         df['yizi']=round((df['high']-df['low'])/df['low'],2)
 
         df=df.drop(0)
-        df=df.fillna(999)
+        df=df.fillna(-999)
         df = df[df['change_r'] >= 9.9]
         if (df.empty):
             pass
