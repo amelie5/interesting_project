@@ -1,0 +1,66 @@
+# -*- coding: utf-8 -*-
+
+__author__ = 'amelie'
+from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, INT
+import pandas as pd
+from datetime import timedelta, datetime
+import tushare as ts
+
+FIVE_DAY=5
+# 连接数据库
+engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
+metadata = MetaData()
+# 定义表
+wm_price = Table('five_day_price', metadata,
+                 Column('code', String(10), nullable=True),
+                 Column('close', FLOAT, nullable=True),
+                 Column('cnt', INT, nullable=True),
+                 Column('date', DATE, nullable=True)
+                 )
+# 初始化数据库
+metadata.create_all(engine)
+# 获取数据库连接
+conn = engine.connect()
+
+r_d = conn.execute('select max(date) from five_day_price where code=%s', '000001')
+res_d = r_d.fetchall()
+start_date = res_d[0][0]
+if (start_date==None):
+    start_date = '2015-01-09'
+else:
+    start_date = start_date + timedelta(days=1)
+    start_date = start_date.strftime("%Y-%m-%d")
+
+    while ts.is_holiday(start_date):
+        start_date = datetime.strptime(start_date, "%Y-%m-%d")
+        start_date = start_date + timedelta(days=1)
+        start_date = start_date.strftime("%Y-%m-%d")
+
+
+    conn.execute("delete from five_day_price where date>=%s", start_date)
+
+r_date = conn.execute('select date from price_amount where code=%s and date>=%s group by date order by date ', 'sh',start_date)
+res_date = r_date.fetchall()
+for x in res_date:
+    date = x[0]
+    date = date.strftime("%Y-%m-%d")
+    print(date)
+    sql="select date from price_amount where code='sh' and date<='"+date+"' group by date order by date desc limit "+str(FIVE_DAY)
+    r_d = conn.execute(sql)
+    res_d = r_d.fetchall()
+    end_date = res_d[FIVE_DAY-1][0]
+    end_date = end_date.strftime("%Y-%m-%d")
+    r = conn.execute(
+        'select code,avg(close)as close,count(1)as cnt from price_amount where code!=%s and date>=%s and date<=%s group by code',
+        'sh',
+        end_date, date)
+    res = r.fetchall()
+    df = pd.DataFrame(res)
+    df.columns = r.keys()
+    df['date'] = date
+    df['ntype'] = 'm'
+
+    d = df.to_dict(orient='records')
+    conn.execute(wm_price.insert(), d)
+
+conn.execute("delete from five_day_price where code is null")
