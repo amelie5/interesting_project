@@ -9,7 +9,7 @@ def transfer(a_list,x):
     ret_list = list((set(a_list).union(set(b_list))) ^ (set(a_list) ^ set(b_list)))
     return len(ret_list)
 
-
+#配置rdsaj6nevavuiqy.mysql.rds.aliyuncs.com_3306
 engine = create_engine('mysql+pymysql://shaolianjie:abcd1234@127.0.0.1:8088/ns_crm_service?charset=utf8')
 metadata = MetaData()
 topic_rule = Table('topic_rule', metadata,
