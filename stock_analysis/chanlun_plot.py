@@ -7,6 +7,7 @@ import datetime as dt
 import matplotlib.pyplot as plt
 import time
 import pandas as pd
+from numpy import array
 
 date='2017-06-01'
 date2='2017-07-20'
@@ -27,7 +28,7 @@ Open=quotes['open']
 High=quotes['high']
 Low=quotes['low']
 T0 = quotes['date']
-
+T0=time.strptime(quotes['date'])
 length=len(Close)
 
 '''K线图绘制开始'''
@@ -37,7 +38,7 @@ ax1 = plt.subplot2grid((10,4),(0,0),rowspan=10,colspan=4)
 #ax1 = plt.axes([0,0,3,2])
 
 X=np.array(range(0, length))
-pad_nan=X+nan
+pad_nan=X+np.nan
 
     #计算上 下影线
 max_clop=Close.copy()
@@ -53,25 +54,25 @@ line_down=np.array([Low,min_clop,pad_nan])
 line_down=np.ravel(line_down,'F')
 
     #计算上下影线对应的X坐标
-pad_nan=nan+X
+pad_nan=np.nan+X
 pad_X=np.array([X,X,X])
 pad_X=np.ravel(pad_X,'F')
 
 
     #画出实体部分,先画收盘价在上的部分
 up_cl=Close.copy()
-up_cl[Close<=Open]=nan
+up_cl[Close<=Open]=np.nan
 up_op=Open.copy()
-up_op[Close<=Open]=nan
+up_op[Close<=Open]=np.nan
 
 down_cl=Close.copy()
-down_cl[Open<=Close]=nan
+down_cl[Open<=Close]=np.nan
 down_op=Open.copy()
-down_op[Open<=Close]=nan
+down_op[Open<=Close]=np.nan
 
 
 even=Close.copy()
-even[Close!=Open]=nan
+even[Close!=Open]=np.nan
 
 #画出收红的实体部分
 pad_box_up=np.array([up_op,up_op,up_cl,up_cl,pad_nan])
@@ -109,8 +110,8 @@ ax1.add_line(handle_line_down)
 
 v=[0,length,Open.min()-0.5,Open.max()+0.5]
 plt.axis(v)
-
-T1 = T0[-len(T0):].astype(dt.date)/1000000000
+tmp=T0[-len(T0):].astype(dt.datetime)
+T1 = tmp/1000000000
 Ti=[]
 for i in range(len(T0)/5):
     a=i*5
@@ -162,7 +163,7 @@ for i in range(len(final_result_array)):
                     # get_price返回的日期，默认时间是08:00:00
                     peak_time = k_line_dto.begin_time.strftime('%Y-%m-%d') +' 08:00:00'
                     break
-            x_fenbi_seq.append(x_date_list.index(long(time.mktime(datetime.strptime(peak_time, "%Y-%m-%d %H:%M:%S").timetuple())*1000000000)))
+            x_fenbi_seq.append(x_date_list.index(time.mktime(datetime.strptime(peak_time, "%Y-%m-%d %H:%M:%S").timetuple())*1000000000))
             y_fenbi_seq.append(m_line_dto.high)
         if m_line_dto.is_bottom == 'Y':
             bottom_time = None
@@ -171,7 +172,7 @@ for i in range(len(final_result_array)):
                     # get_price返回的日期，默认时间是08:00:00
                     bottom_time = k_line_dto.begin_time.strftime('%Y-%m-%d') +' 08:00:00'
                     break
-            x_fenbi_seq.append(x_date_list.index(long(time.mktime(datetime.strptime(bottom_time, "%Y-%m-%d %H:%M:%S").timetuple())*1000000000)))
+            x_fenbi_seq.append(x_date_list.index(time.mktime(datetime.strptime(bottom_time, "%Y-%m-%d %H:%M:%S").timetuple())*1000000000))
             y_fenbi_seq.append(m_line_dto.low)
 
 #  在原图基础上添加分笔蓝线
