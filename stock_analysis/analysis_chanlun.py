@@ -27,6 +27,7 @@ for x in res:
     high1 = res_1[2][1]
     close3=res_1[0][2]
     if(low1>low2 and low3>low2 and high1>high2 and high3>high2):
+
         if(high3>high1 and close3>(high1+low1)/2):
             r_2 = conn.execute(
                 'select p_change from p_change where code=%s and date=%s order by date desc limit 3', code,date)
