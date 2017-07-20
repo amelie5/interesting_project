@@ -6,6 +6,8 @@ import pandas as pd
 from datetime import timedelta, datetime
 import tushare as ts
 
+MONTH=22
+
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
@@ -42,9 +44,9 @@ for x in res_date:
     date = x[0]
     date = date.strftime("%Y-%m-%d")
 
-    r_d = conn.execute('select date from price_amount where code=%s and date<=%s group by date order by date desc limit 22', 'sh',date)
+    r_d = conn.execute('select date from price_amount where code=%s and date<=%s group by date order by date desc limit %s', 'sh',date,MONTH)
     res_d = r_d.fetchall()
-    end_date = res_d[21][0]
+    end_date = res_d[MONTH-1][0]
     end_date = end_date.strftime("%Y-%m-%d")
     r = conn.execute(
         'select code,avg(close)as close,count(1)as cnt from price_amount where code!=%s and date>=%s and date<=%s group by code',
