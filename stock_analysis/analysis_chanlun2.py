@@ -27,7 +27,7 @@ for c in resc:
         k_line_list.append(k_line_dto)
 
     merge_line_list = find_peak_and_bottom(k_line_list, "down")
-    fenbi_result, final_result_array, fenbi_seq_list = fen_bi(merge_line_list)
+    fenbi_result, final_result_array, fenbi_seq_list = fen_bi(merge_line_list,False)
 
 
     # 最后的规则整合
@@ -37,7 +37,7 @@ for c in resc:
             m_line_dto=merge_line_list[fenbi_seq_list[i]]
             if m_line_dto.is_bottom == 'Y':
                 s_d=m_line_dto.begin_time
-                if s_d>=datetime.strptime('2017-07-19', "%Y-%m-%d").date():
+                if s_d>=datetime.strptime('2017-07-18', "%Y-%m-%d").date():
                     a = conn.execute('select close>m5 from '
                                      '(select close from price_amount where date=%s and code=%s)t1 '
                                      'INNER JOIN '
@@ -46,7 +46,7 @@ for c in resc:
                     a_res = a.fetchall()
                     if(a_res[0][0]):
                         print(code+"\t"+
-                          m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-                          m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                          m_line_dto.begin_time.strftime('%Y-%m-%d') + "\t" +
+                          m_line_dto.end_time.strftime('%Y-%m-%d') + "\t" +
                           "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
                           "底[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")

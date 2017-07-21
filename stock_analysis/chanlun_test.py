@@ -24,4 +24,4 @@ for x in res:
     k_line_list.append(k_line_dto)
 
 merge_line_list = find_peak_and_bottom(k_line_list, "down")
-fenbi_result, final_result_array, fenbi_seq_list = fen_bi(merge_line_list)
+fenbi_result, final_result_array, fenbi_seq_list = fen_bi(merge_line_list,True)
