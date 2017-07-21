@@ -37,7 +37,7 @@ for c in resc:
             m_line_dto=merge_line_list[fenbi_seq_list[i]]
             if m_line_dto.is_bottom == 'Y':
                 s_d=m_line_dto.begin_time
-                if s_d>=datetime.strptime('2017-07-01', "%Y-%m-%d").date():
+                if s_d>=datetime.strptime('2017-07-19', "%Y-%m-%d").date():
                     a = conn.execute('select close>m5 from '
                                      '(select close from price_amount where date=%s and code=%s)t1 '
                                      'INNER JOIN '

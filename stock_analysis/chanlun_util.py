@@ -250,12 +250,24 @@ def fen_bi(merge_line_list):
         if result_array[i]:
             m_line_dto = merge_line_list[point_index_list[i]]
             if m_line_dto.is_peak == 'Y':
-                print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-                      m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-                      "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
-                      "顶[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
+                if type(m_line_dto.begin_time) is str:
+                    print(m_line_dto.begin_time + "\t" +
+                          m_line_dto.end_time + "\t" +
+                          "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
+                          "顶[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
+                else:
+                    print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                          m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                          "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
+                          "顶[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
             if m_line_dto.is_bottom == 'Y':
-                print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                if type(m_line_dto.begin_time) is str:
+                    print(m_line_dto.begin_time + "\t" +
+                          m_line_dto.end_time + "\t" +
+                          "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
+                          "底[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
+                else:
+                    print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
                       m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
                       "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
                       "底[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")

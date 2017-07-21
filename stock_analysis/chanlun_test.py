@@ -2,7 +2,7 @@ from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DA
 from chanlun_util import find_peak_and_bottom, KLineDTO, fen_bi
 from datetime import datetime
 
-date = '2017-01-01'
+date = '2017-06-01'
 date2 = '2017-07-20'
 code = '601318'
 k_line_list=[]
@@ -11,7 +11,7 @@ k_line_list=[]
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 conn = engine.connect()
 
-r = conn.execute('select date,high,low,open,close from price_amount where code=%s and date>=%s and date<=%s', code,
+r = conn.execute('select date,high,low,open,close from price_amount where code=%s and date>=%s and date<=%s order by date', code,
                  date, date2)
 res = r.fetchall()
 for x in res:
