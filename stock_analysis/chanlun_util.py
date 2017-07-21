@@ -242,23 +242,23 @@ def fen_bi(merge_line_list):
         index -= 1
 
     # 4.输出分笔结果
-    # print("分笔结果 : " + str(has_result))
-    # if not has_result:
-    #     print("按照目前的划分规则，没有找到分笔的结果.")
-    #
-    # for i in range(len(result_array)):
-    #     if result_array[i]:
-    #         m_line_dto = merge_line_list[point_index_list[i]]
-    #         if m_line_dto.is_peak == 'Y':
-    #             print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-    #                   m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-    #                   "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
-    #                   "顶[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
-    #         if m_line_dto.is_bottom == 'Y':
-    #             print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-    #                   m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
-    #                   "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
-    #                   "底[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
+    print("分笔结果 : " + str(has_result))
+    if not has_result:
+        print("按照目前的划分规则，没有找到分笔的结果.")
+
+    for i in range(len(result_array)):
+        if result_array[i]:
+            m_line_dto = merge_line_list[point_index_list[i]]
+            if m_line_dto.is_peak == 'Y':
+                print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                      m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                      "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
+                      "顶[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
+            if m_line_dto.is_bottom == 'Y':
+                print(m_line_dto.begin_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                      m_line_dto.end_time.strftime('%Y-%m-%d %H:%M:%S') + "\t" +
+                      "合并[" + str(m_line_dto.stick_num) + "]条K线" + "\t" +
+                      "底[" + str(m_line_dto.low) + "][" + str(m_line_dto.high) + "]")
     return has_result, result_array, point_index_list
 
 

@@ -9,9 +9,9 @@ import time
 import pandas as pd
 from numpy import array
 
-date='2017-06-01'
+date='2017-01-01'
 date2='2017-07-20'
-code='000001'
+code='603799'
 k_line_list=[]
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -28,7 +28,6 @@ Open=quotes['open']
 High=quotes['high']
 Low=quotes['low']
 T0 = quotes['date']
-T0=time.strptime(quotes['date'])
 length=len(Close)
 
 '''K线图绘制开始'''
@@ -110,20 +109,15 @@ ax1.add_line(handle_line_down)
 
 v=[0,length,Open.min()-0.5,Open.max()+0.5]
 plt.axis(v)
-tmp=T0[-len(T0):].astype(dt.datetime)
-T1 = tmp/1000000000
+T1=T0[-len(T0):].astype(dt.date)
+#T1 = tmp/1000000000
 Ti=[]
-for i in range(len(T0)/5):
+for i in range(int(len(T0)/5)):
     a=i*5
-    d = dt.date.fromtimestamp(T1[a])
-    #print d
-    T2=d.strftime('$%Y-%m-%d$')
-    Ti.append(T2)
+    Ti.append(T1[a])
     #print tab
-d1= dt.date.fromtimestamp(T1[len(T0)-1])
-d2=d1.strftime('$%Y-%m-%d$')
-Ti.append(d2)
 
+Ti.append(T1[len(T0)-1])
 ax1.set_xticks(np.linspace(-2,len(Close)+2,len(Ti)))
 
 ll=Low.min()*0.97
@@ -161,18 +155,19 @@ for i in range(len(final_result_array)):
             for k_line_dto in m_line_dto.member_list[::-1]:
                 if k_line_dto.high == m_line_dto.high:
                     # get_price返回的日期，默认时间是08:00:00
-                    peak_time = k_line_dto.begin_time.strftime('%Y-%m-%d') +' 08:00:00'
+                    peak_time = k_line_dto.begin_time
                     break
-            x_fenbi_seq.append(x_date_list.index(time.mktime(datetime.strptime(peak_time, "%Y-%m-%d %H:%M:%S").timetuple())*1000000000))
+            x_fenbi_seq.append(x_date_list.index(peak_time))
             y_fenbi_seq.append(m_line_dto.high)
         if m_line_dto.is_bottom == 'Y':
             bottom_time = None
             for k_line_dto in m_line_dto.member_list[::-1]:
                 if k_line_dto.low == m_line_dto.low:
                     # get_price返回的日期，默认时间是08:00:00
-                    bottom_time = k_line_dto.begin_time.strftime('%Y-%m-%d') +' 08:00:00'
+                    bottom_time = k_line_dto.begin_time
                     break
-            x_fenbi_seq.append(x_date_list.index(time.mktime(datetime.strptime(bottom_time, "%Y-%m-%d %H:%M:%S").timetuple())*1000000000))
+
+            x_fenbi_seq.append(x_date_list.index(bottom_time))
             y_fenbi_seq.append(m_line_dto.low)
 
 #  在原图基础上添加分笔蓝线
