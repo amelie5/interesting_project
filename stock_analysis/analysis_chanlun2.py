@@ -14,7 +14,7 @@ resc = r_c.fetchall()
 for c in resc:
     k_line_list = []
     code = c[0]
-    r = conn.execute('select date,high,low,open,close from price_amount where code=%s and date>=%s and date<=%s', code,
+    r = conn.execute('select date,high,low,open,close from price_amount where code=%s and date>=%s and date<=%s order by date', code,
                      date, date2)
     res = r.fetchall()
     for x in res:
