@@ -221,11 +221,11 @@ def get_market(date):
     data = json.loads(html)
     list = data['List']
     df = pd.DataFrame()
-      # 调用事件模块
+    # 调用事件模块
 
-    if date=='':
+    if date == '':
         today = datetime.date.today()  # 获取今天日期
-        date=today.strftime('%Y-%m-%d')
+        date = today.strftime('%Y-%m-%d')
 
     for tuple in list:
         code = tuple[0]
@@ -240,8 +240,70 @@ def get_market(date):
         trader = tuple[10]
         df = df.append(
             {"code": code, "name": name, "price": price, "price_first": price_first, "market": market, "buy": buy,
-             "sell": sell, "d": d, "concept": concept, "trader": trader,"date":date}, ignore_index=True)
+             "sell": sell, "d": d, "concept": concept, "trader": trader, "date": date}, ignore_index=True)
     return df
 
+
+def get_longhu(date):
+    import json
+    import datetime
+    url = 'http://phbapi.yidiancangwei.com/w1/api/index.php'
+    headers = {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/59.0.3071.115 Safari/537.36",
+        "Accept": "application/json, text/javascript, */*; q=0.01",
+        "Accept-Encoding": "gzip, deflate",
+        "Accept-Language": "zh-CN,zh;q=0.8",
+        "Connection": "keep-alive",
+        "Content-Lengthv": "103",
+        "Content-Type": "application/x-www-form-urlencoded; charset=UTF-8",
+        "Host": "phbapi.yidiancangwei.com",
+        "Origin": "http://phb.yidiancangwei.com",
+        "Referer": "http://phb.yidiancangwei.com/scfk.html"
+    }
+    data = {
+        "c": 'StockRanking',
+        "a": 'RealRankingInfo',
+        "Date": date,
+        "RStart": '',
+        "REnd": '',
+        "Ratio": 1000,
+        "Tpye": 1,
+        "Order": "1",
+        "Index": "1",
+        "st": "4000"
+    }
+
+    html = requests.post(url, data=data, headers=headers).text
+    data = json.loads(html)
+    list = data['list']
+    df = pd.DataFrame()
+    # 调用事件模块
+
+    if date == '':
+        today = datetime.date.today()  # 获取今天日期
+        date = today.strftime('%Y-%m-%d')
+
+    for tuple in list:
+        code = tuple[0]
+        name = tuple[1]
+        p_change = tuple[2]
+        market = tuple[3]
+        concept = tuple[4]
+        buy = tuple[5]
+        sell = tuple[6]
+        d = tuple[7]
+        trader = tuple[8]
+        df = df.append(
+            {"code": code, "name": name, "p_change":p_change,"market": market, "buy": buy,
+             "sell": sell, "d": d, "concept": concept, "trader": trader, "date": date}, ignore_index=True)
+    return df
+
+
 if __name__ == '__main__':
-    get_market('')
+    import time
+
+    a = "2017-08-02 09:31"
+    t = int(time.mktime(time.strptime(a, '%Y-%m-%d %H:%M')))
+
+    df = get_longhu('2017-08-14')
+    print(df)
