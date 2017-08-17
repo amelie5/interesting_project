@@ -292,7 +292,7 @@ def get_longhu(date):
         buy = tuple[5]
         sell = tuple[6]
         d = tuple[7]
-        trader = tuple[8]
+        trader = tuple[9]
         df = df.append(
             {"code": code, "name": name, "p_change":p_change,"market": market, "buy": buy,
              "sell": sell, "d": d, "concept": concept, "trader": trader, "date": date}, ignore_index=True)
@@ -305,5 +305,5 @@ if __name__ == '__main__':
     a = "2017-08-02 09:31"
     t = int(time.mktime(time.strptime(a, '%Y-%m-%d %H:%M')))
 
-    df = get_longhu('2017-08-14')
+    df = get_longhu('2017-08-09')
     print(df)
