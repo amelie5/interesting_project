@@ -9,15 +9,15 @@ from datetime import timedelta,datetime
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
 # 定义表
-top_ten = Table('price_amount', metadata,
-                Column('code', String(10), nullable=True),
-                Column('open', FLOAT, nullable=True),
-                Column('close', FLOAT, nullable=True),
-                Column('high', FLOAT, nullable=True),
-                Column('low', FLOAT, nullable=True),
-                Column('volume', FLOAT, nullable=True),
-                Column('date', DATE, nullable=True)
-                )
+price_amount = Table('price_amount', metadata,
+                     Column('code', String(10), nullable=True),
+                     Column('open', FLOAT, nullable=True),
+                     Column('close', FLOAT, nullable=True),
+                     Column('high', FLOAT, nullable=True),
+                     Column('low', FLOAT, nullable=True),
+                     Column('volume', FLOAT, nullable=True),
+                     Column('date', DATE, nullable=True)
+                     )
 # 初始化数据库
 metadata.create_all(engine)
 # 获取数据库连接
@@ -46,7 +46,7 @@ for x in res:
     df['code']=code
     df.reset_index(level=0, inplace=True)
     d = df.to_dict(orient='records')
-    conn.execute(top_ten.insert(), d)
+    conn.execute(price_amount.insert(), d)
     timeToOpen = x[8]
     if timeToOpen != None:
         timeToOpen = timeToOpen.strftime('%Y-%m-%d')
@@ -57,6 +57,20 @@ df=df[['open','close','high','low','volume']]
 df['code'] ='sh'
 df.reset_index(level=0, inplace=True)
 d = df.to_dict(orient='records')
-conn.execute(top_ten.insert(), d)
+conn.execute(price_amount.insert(), d)
+
+df = ts.get_hist_data('hs300', start=start_date)
+df=df[['open','close','high','low','volume']]
+df['code'] ='hs300'
+df.reset_index(level=0, inplace=True)
+d = df.to_dict(orient='records')
+conn.execute(price_amount.insert(), d)
+
+df = ts.get_hist_data('sz50', start=start_date)
+df=df[['open','close','high','low','volume']]
+df['code'] ='sz50'
+df.reset_index(level=0, inplace=True)
+d = df.to_dict(orient='records')
+conn.execute(price_amount.insert(), d)
 
 conn.execute('delete from price_amount where code is null')

@@ -1,6 +1,6 @@
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, String, TIMESTAMP, FLOAT
-from datetime import timedelta,datetime
+from datetime import timedelta, datetime
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -50,6 +50,20 @@ df_sh = ts.get_hist_data('sh', start=start_date)
 df_sh = df_sh[['p_change', 'volume']]
 df_sh.reset_index(level=0, inplace=True)
 df_sh['code'] = 'sh'
+dict_sh = df_sh.to_dict(orient='records')
+conn.execute(p_change.insert(), dict_sh)
+
+df_sh = ts.get_hist_data('hs300', start=start_date)
+df_sh = df_sh[['p_change', 'volume']]
+df_sh.reset_index(level=0, inplace=True)
+df_sh['code'] = 'hs300'
+dict_sh = df_sh.to_dict(orient='records')
+conn.execute(p_change.insert(), dict_sh)
+
+df_sh = ts.get_hist_data('sz50', start=start_date)
+df_sh = df_sh[['p_change', 'volume']]
+df_sh.reset_index(level=0, inplace=True)
+df_sh['code'] = 'sz50'
 dict_sh = df_sh.to_dict(orient='records')
 conn.execute(p_change.insert(), dict_sh)
 
