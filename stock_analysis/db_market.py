@@ -37,12 +37,12 @@ while ts.is_holiday(start_date):
     start_date = start_date.strftime("%Y-%m-%d")
 
 conn.execute('delete from market where date>=%s',start_date)
-r1 = conn.execute('select date from p_change where code=%s and date>=%s order by date','000001',start_date)
+r1 = conn.execute('select date from p_change where code=%s and date>=%s order by date','sh',start_date)
 res = r1.fetchall()
 for x in res:
     date = x[0]
     date = date.strftime("%Y-%m-%d")
-    print(date)
+    print('market: ',date)
     sql = "insert into market \n" \
           "select t1.date,cnt,zhangting_sum,dieting_sum,zhang_sum,die_sum,volume,p_change,price from\n" \
           "(select count(1)as cnt from stock_basics where timeToMarket!='0000-00-00' and code not in\n" \

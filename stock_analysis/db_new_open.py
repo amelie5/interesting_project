@@ -55,7 +55,7 @@ df_n = pd.DataFrame()
 for x in res:
     timetoMark = x[3]
     code = x[0]
-    print(code)
+    print('new open:',code)
     name = x[1]
 
     end_date = timetoMark + timedelta(days=NOTIFY_DAY)

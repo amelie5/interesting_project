@@ -40,7 +40,7 @@ else:
     conn.execute('delete from open_ban where date>=%s', date)
 
 
-
+print('open_ban: ',date)
 sql = "insert into open_ban \n" \
       "select timeToOpen,num,feng_num,round(daban_rate,2),next_zhang_num,feng_next_zhang_num,feng_next_2_zhang_num from \n" \
       "(select timeToOpen,count(1) as num," \

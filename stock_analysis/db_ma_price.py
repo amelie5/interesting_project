@@ -24,7 +24,7 @@ metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
 
-r_d = conn.execute('select max(date) from ma_price where code=%s', '000001')
+r_d = conn.execute('select max(date) from ma_price where code=%s', 'sh')
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
 if (start_date==None):
@@ -45,7 +45,7 @@ r_code = conn.execute('select code from stock_basics where holders!=0')
 r_code = r_code.fetchall()
 for x in r_code:
     code = x[0]
-    print(code)
+    print('ma_price: ',code)
     df=ts.get_hist_data(code,start=start_date)
     df=df[['ma5','ma10','ma20']]
     df['code']=code

@@ -40,7 +40,7 @@ r1 = conn.execute("select * from stock_basics where timeToMarket!='0000-00-00'")
 res1 = r1.fetchall()
 for x in res1:
     code = x[0]
-    print(code)
+    print('zhang_stop: ',code)
     r = conn.execute(
         'select t.date,t.code,p_change,close,high,low from (select * from price_amount where code=%s and date>=%s)t LEFT JOIN (select * from p_change where code=%s and date>=%s )n ' +
         'on t.code=n.code and t.date=n.date order by t.date',

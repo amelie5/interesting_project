@@ -23,7 +23,7 @@ metadata.create_all(engine)
 # 获取数据库连接
 conn = engine.connect()
 
-r_d = conn.execute("select max(date) from price_amount where code='000001'")
+r_d = conn.execute("select max(date) from price_amount where code='sh'")
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
 start_date = start_date + timedelta(days=1)
@@ -40,7 +40,7 @@ r1 = conn.execute('select * from stock_basics b left join new_stock_open o on o.
 res = r1.fetchall()
 for x in res:
     code = x[0]
-    print(code)
+    print('price: ',code)
     df = ts.get_hist_data(code, start=start_date)
     df=df[['open','close','high','low','volume']]
     df['code']=code
