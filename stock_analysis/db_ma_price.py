@@ -5,6 +5,8 @@ from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DA
 import pandas as pd
 from datetime import timedelta, datetime
 import tushare as ts
+import time
+import sys
 
 FIVE_DAY=5
 # 连接数据库
@@ -27,9 +29,17 @@ conn = engine.connect()
 r_d = conn.execute('select max(date) from ma_price where code=%s', 'sh')
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
+
 if (start_date==None):
     start_date = '2015-01-09'
+
 else:
+    sd=start_date.strftime("%Y-%m-%d")
+    today=time.strftime("%Y-%m-%d")
+    if sd==today:
+        print('数据已经是最新的了！！')
+        sys.exit(0)
+
     start_date = start_date + timedelta(days=1)
     start_date = start_date.strftime("%Y-%m-%d")
 

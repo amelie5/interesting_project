@@ -3,7 +3,8 @@ from datetime import timedelta,datetime
 import pandas as pd
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE, Integer, TIMESTAMP
-
+import time
+import sys
 
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
@@ -24,6 +25,12 @@ conn = engine.connect()
 r_d=conn.execute('select max(date) from zhang_stop ')
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
+
+sd=start_date.strftime("%Y-%m-%d")
+today=time.strftime("%Y-%m-%d")
+if sd==today:
+    print('数据已经是最新的了！！')
+    sys.exit(0)
 
 date = start_date - timedelta(days=1)
 date = date.strftime("%Y-%m-%d")
