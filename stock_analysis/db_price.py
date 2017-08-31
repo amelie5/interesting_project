@@ -3,7 +3,7 @@
 __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, FLOAT, String, DATE
-from datetime import timedelta,datetime
+from datetime import timedelta, datetime
 import time
 import sys
 
@@ -18,7 +18,9 @@ price_amount = Table('price_amount', metadata,
                      Column('high', FLOAT, nullable=True),
                      Column('low', FLOAT, nullable=True),
                      Column('volume', FLOAT, nullable=True),
-                     Column('date', DATE, nullable=True)
+                     Column('date', DATE, nullable=True),
+                     Column('avg', FLOAT, nullable=True),
+                     Column('std', FLOAT, nullable=True)
                      )
 # 初始化数据库
 metadata.create_all(engine)
@@ -29,9 +31,9 @@ r_d = conn.execute("select max(date) from price_amount where code='sh'")
 res_d = r_d.fetchall()
 start_date = res_d[0][0]
 
-sd=start_date.strftime("%Y-%m-%d")
-today=time.strftime("%Y-%m-%d")
-if sd==today:
+sd = start_date.strftime("%Y-%m-%d")
+today = time.strftime("%Y-%m-%d")
+if sd == today:
     print('数据已经是最新的了！！')
     sys.exit(0)
 
@@ -43,16 +45,21 @@ while ts.is_holiday(start_date):
     start_date = start_date + timedelta(days=1)
     start_date = start_date.strftime("%Y-%m-%d")
 
-conn.execute('delete from price_amount where date>=%s',start_date)
+conn.execute('delete from price_amount where date>=%s', start_date)
 
-r1 = conn.execute('select * from stock_basics b left join new_stock_open o on o.code=b.code where b.timeToMarket!=0000-00-00')
+r1 = conn.execute(
+    'select * from stock_basics b left join new_stock_open o on o.code=b.code where b.timeToMarket!=0000-00-00')
 res = r1.fetchall()
 for x in res:
     code = x[0]
-    print('price: ',code)
+    print('price: ', code)
     df = ts.get_hist_data(code, start=start_date)
-    df=df[['open','close','high','low','volume']]
-    df['code']=code
+    df = df[['open', 'close', 'high', 'low', 'volume']]
+    df['code'] = code
+    rr = conn.execute('select round(avg(close),2),round(std(close),2) from price_amount where code=%s', code)
+    st = rr.fetchall()
+    df['avg'] = st[0][0]
+    df['std'] = st[0][1]
     df.reset_index(level=0, inplace=True)
     d = df.to_dict(orient='records')
     conn.execute(price_amount.insert(), d)
@@ -62,22 +69,34 @@ for x in res:
         conn.execute('delete from price_amount where code=%s and date<%s and date>=%s', code, timeToOpen, '2017-06-21')
 
 df = ts.get_hist_data('sh', start=start_date)
-df=df[['open','close','high','low','volume']]
-df['code'] ='sh'
+df = df[['open', 'close', 'high', 'low', 'volume']]
+df['code'] = 'sh'
+rr = conn.execute('select round(avg(close),2),round(std(close),2) from price_amount where code=%s', 'sh')
+st = rr.fetchall()
+df['avg'] = st[0][0]
+df['std'] = st[0][1]
 df.reset_index(level=0, inplace=True)
 d = df.to_dict(orient='records')
 conn.execute(price_amount.insert(), d)
 
 df = ts.get_hist_data('hs300', start=start_date)
-df=df[['open','close','high','low','volume']]
-df['code'] ='hs300'
+df = df[['open', 'close', 'high', 'low', 'volume']]
+df['code'] = 'hs300'
+rr = conn.execute('select round(avg(close),2),round(std(close),2) from price_amount where code=%s', 'hs300')
+st = rr.fetchall()
+df['avg'] = st[0][0]
+df['std'] = st[0][1]
 df.reset_index(level=0, inplace=True)
 d = df.to_dict(orient='records')
 conn.execute(price_amount.insert(), d)
 
 df = ts.get_hist_data('sz50', start=start_date)
-df=df[['open','close','high','low','volume']]
-df['code'] ='sz50'
+df = df[['open', 'close', 'high', 'low', 'volume']]
+df['code'] = 'sz50'
+rr = conn.execute('select round(avg(close),2),round(std(close),2) from price_amount where code=%s', 'sz50')
+st = rr.fetchall()
+df['avg'] = st[0][0]
+df['std'] = st[0][1]
 df.reset_index(level=0, inplace=True)
 d = df.to_dict(orient='records')
 conn.execute(price_amount.insert(), d)
