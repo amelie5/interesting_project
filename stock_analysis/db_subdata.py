@@ -4,12 +4,14 @@ __author__ = 'amelie'
 import tushare as ts
 from sqlalchemy import create_engine, Table, Column, MetaData, Integer, String, DATE, FLOAT
 import time
+
 # 连接数据库
 engine = create_engine('mysql+pymysql://root:wxj555@127.0.0.1/my_db?charset=utf8')
 metadata = MetaData()
 # 定义表
 subdata = Table('subdata', metadata,
                 Column('code', String(10), nullable=False),
+                Column('pe', String(10), nullable=False),
                 Column('turnover', FLOAT, nullable=False),
                 Column('volume', FLOAT, nullable=False),
                 Column('selling', FLOAT, nullable=False),
@@ -29,11 +31,12 @@ metadata.create_all(engine)
 conn = engine.connect()
 
 today = time.strftime("%Y-%m-%d")
-conn.execute('delete from subdata where date>=%s',today)
+conn.execute('delete from subdata where date>=%s', today)
 
 df = ts.get_day_all()
-df = df[["code", "turnover", "volume", "selling", "buying", "fvalues", "avgprice", "strength", "activity", "attack", "interval3", "interval6"]]
-df['date']=today
+df = df[["code", "turnover", "volume", "selling", "buying", "fvalues", "avgprice", "strength", "activity", "attack",
+         "interval3", "interval6","pe"]]
+df['date'] = today
 df = df.fillna(-9999)
 d = df.to_dict(orient='records')
 
